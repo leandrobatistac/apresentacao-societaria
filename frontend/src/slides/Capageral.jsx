@@ -1,7 +1,8 @@
 import NavBar from '../components/NavBar'
 
-const FOTO = '/foto-obra1.jpeg'
-const AZUL_PADRAO = '#1e3a5f'
+const FOTO  = '/foto-obra1.png'
+const NAVY  = '#07111f'
+const ACCENT = '#2563eb'
 
 export default function CapaGeral({ obras, goTo, current, total }) {
   const groups = [...new Set(obras.map(o => o.consorcio).filter(Boolean))]
@@ -10,90 +11,100 @@ export default function CapaGeral({ obras, goTo, current, total }) {
     <div style={{
       width:'100%', height:'100%',
       display:'flex', flexDirection:'column',
-      background:'var(--surface)',
+      background: NAVY,
     }}>
-      {/* Main area */}
-      <div style={{ flex:1, display:'flex', overflow:'hidden' }}>
-
-        {/* LEFT — conteúdo */}
+      <div style={{ flex:1, display:'flex', overflow:'hidden', position:'relative' }}>
+        {/* Linha flat única — atravessa todo o slide */}
         <div style={{
-          flex:'0 0 50%',
-          background: AZUL_PADRAO,
+          position:'absolute', top:0, left:0, right:0,
+          height:3, background: ACCENT,
+          zIndex:10, pointerEvents:'none',
+        }}/>
+
+        {/* ── ESQUERDA ── */}
+        <div style={{
+          flex:'0 0 52%',
+          background: NAVY,
           display:'flex', flexDirection:'column',
-          justifyContent:'center',
-          padding:'0 7%',
+          justifyContent:'space-between',
+          padding:'52px 7% 40px',
           position:'relative',
           overflow:'hidden',
+          zIndex:1,
         }}>
-          {/* Decoração de fundo */}
-          <div style={{
-            position:'absolute', bottom:-120, left:-80,
-            width:400, height:400, borderRadius:'50%',
-            border:'1px solid rgba(255,255,255,.06)',
-            pointerEvents:'none',
-          }}/>
-          <div style={{
-            position:'absolute', bottom:-60, left:-40,
-            width:260, height:260, borderRadius:'50%',
-            border:'1px solid rgba(255,255,255,.04)',
-            pointerEvents:'none',
-          }}/>
+          {/* Decorações */}
+          <div style={{ position:'absolute', inset:0, pointerEvents:'none', overflow:'hidden' }}>
+            <div style={{
+              position:'absolute', bottom:-180, left:-180,
+              width:520, height:520, borderRadius:'50%',
+              border:'1px solid rgba(255,255,255,.04)',
+            }}/>
+            <div style={{
+              position:'absolute', bottom:-110, left:-110,
+              width:360, height:360, borderRadius:'50%',
+              border:'1px solid rgba(255,255,255,.03)',
+            }}/>
+
+          </div>
 
           {/* Logo */}
-          <div style={{ marginBottom:40 }}>
+          <div style={{ position:'relative' }}>
             <img
               src="/logo.png"
               alt="Poros"
-              style={{ height:52, objectFit:'contain', filter:'brightness(0) invert(1)' }}
+              style={{
+                height:76, objectFit:'contain', objectPosition:'left',
+                filter:'brightness(0) invert(1)', display:'block', opacity:.95,
+              }}
               onError={e => {
                 e.target.style.display = 'none'
                 e.target.nextSibling.style.display = 'block'
               }}
             />
-            <div style={{ display:'none', fontSize:18, fontWeight:700, color:'#fff', letterSpacing:'.08em' }}>
+            <div style={{ display:'none', fontSize:22, fontWeight:800, color:'#fff', letterSpacing:'.12em' }}>
               POROS
             </div>
           </div>
 
-          {/* Linha */}
-          <div style={{ width:40, height:2, background:'rgba(255,255,255,.25)', marginBottom:28 }}/>
-
           {/* Título */}
-          <div style={{
-            fontSize:'clamp(28px, 3.5vw, 46px)',
-            fontWeight:700, color:'#fff',
-            lineHeight:1.15, letterSpacing:'-.01em',
-            marginBottom:10,
-          }}>
-            Apresentação<br/>Societária
-          </div>
+          <div style={{ position:'relative', flex:1, display:'flex', flexDirection:'column', justifyContent:'flex-start', paddingTop:72 }}>
+            <div style={{
+              display:'inline-flex', alignItems:'center', gap:8,
+              fontSize:12, fontWeight:600, letterSpacing:'.18em', textTransform:'uppercase',
+              color: ACCENT, marginBottom:20,
+            }}>
+              <div style={{ width:20, height:1, background: ACCENT }}/>
+              Apresentação Societária
+            </div>
 
-          <div style={{
-            fontSize:14, fontWeight:400,
-            color:'rgba(255,255,255,.55)',
-            marginBottom:48,
-            letterSpacing:'.01em',
-          }}>
-            Resultado de Obras, Equipamentos e Indicadores Financeiros
+            <div style={{
+              fontSize:'clamp(28px, 3.2vw, 46px)',
+              fontWeight:700, color:'#fff',
+              lineHeight:1.15, letterSpacing:'-.02em',
+              marginBottom:14,
+            }}>
+              Resultado de Obras,<br/>Equipamentos e Financeiro
+            </div>
           </div>
 
           {/* Meta */}
-          <div style={{ display:'flex', gap:32 }}>
+          <div style={{
+            position:'relative',
+            borderTop:'1px solid rgba(255,255,255,.08)',
+            paddingTop:24,
+            display:'flex', alignItems:'center', gap:0,
+          }}>
             {[
               { label:'Referência', value:'ABR / 2026' },
             ].map((item, i) => (
-              <div key={i} style={{
-                paddingRight: i < 2 ? 32 : 0,
-                borderRight: i < 2 ? '1px solid rgba(255,255,255,.1)' : 'none',
-              }}>
+              <div key={i} style={{ paddingRight: i < 2 ? 32 : 0, borderRight: 'none' }}>
                 <div style={{
-                  fontSize:9, fontWeight:600, letterSpacing:'.15em',
-                  textTransform:'uppercase', color:'rgba(255,255,255,.35)',
-                  marginBottom:5,
+                  fontSize:9, fontWeight:600, letterSpacing:'.18em', textTransform:'uppercase',
+                  color:'rgba(255,255,255,.3)', marginBottom:6,
                 }}>
                   {item.label}
                 </div>
-                <div style={{ fontSize:15, fontWeight:600, color:'rgba(255,255,255,.85)' }}>
+                <div style={{ fontSize:16, fontWeight:600, color:'#fff', letterSpacing:'.02em' }}>
                   {item.value}
                 </div>
               </div>
@@ -101,12 +112,8 @@ export default function CapaGeral({ obras, goTo, current, total }) {
           </div>
         </div>
 
-        {/* RIGHT — foto */}
-        <div style={{
-          flex:'0 0 50%',
-          position:'relative',
-          overflow:'hidden',
-        }}>
+        {/* ── DIREITA — Foto ── */}
+        <div style={{ flex:'0 0 48%', position:'relative', overflow:'hidden' }}>
           <img
             src={FOTO}
             alt="Obra"
@@ -114,17 +121,23 @@ export default function CapaGeral({ obras, goTo, current, total }) {
               width:'100%', height:'100%',
               objectFit:'cover', objectPosition:'center',
               display:'block',
+              filter:'brightness(.72) saturate(.85)',
             }}
           />
-          {/* Overlay gradiente */}
           <div style={{
             position:'absolute', inset:0,
-            background:`linear-gradient(to right, ${AZUL_PADRAO} 0%, transparent 30%)`,
+            background:`linear-gradient(to right, ${NAVY} 0%, rgba(7,17,31,.45) 32%, transparent 68%)`,
           }}/>
+          <div style={{
+            position:'absolute', inset:0,
+            background:'linear-gradient(to bottom, rgba(7,17,31,.35) 0%, transparent 25%, transparent 72%, rgba(7,17,31,.25) 100%)',
+          }}/>
+
         </div>
+
       </div>
 
-      <NavBar current={current} total={total} goTo={goTo} />
+      <NavBar current={current} total={total} goTo={goTo}/>
     </div>
   )
 }

@@ -1,3 +1,12 @@
+# Pastas de dependências
 node_modules/
-.env
+
+# Pastas de build
 dist/
+.next/
+out/
+
+# Ignora qualquer arquivo .env em qualquer subpasta
+**/.env
+**/.env.local
+**/.env.*.local

@@ -84,11 +84,22 @@ export function Dropdown({ label, count, totalCount, children }) {
           position:'absolute', top:'calc(100% + 6px)', right:0,
           background:'var(--surface)', border:'1px solid var(--border)',
           borderRadius:10, boxShadow:'0 12px 40px rgba(0,0,0,.12)',
-          minWidth:230, zIndex:200, maxHeight:300, overflowY:'auto',
+          minWidth:230, zIndex:200,
+          display:'flex', flexDirection:'column',
+          maxHeight:320,
         }}>
           {children}
         </div>
       )}
+    </div>
+  )
+}
+
+// Área rolável dentro do dropdown
+export function DropScrollBody({ children }) {
+  return (
+    <div style={{ overflowY:'auto', flex:1 }}>
+      {children}
     </div>
   )
 }
@@ -122,7 +133,11 @@ export function DropGroupLabel({ label }) {
 
 export function DropActions({ onAll, onNone }) {
   return (
-    <div style={{ display:'flex', gap:4, padding:'6px 8px', borderTop:'1px solid var(--border)' }}>
+    <div style={{
+      display:'flex', gap:4, padding:'6px 8px',
+      borderBottom:'1px solid var(--border)',
+      flexShrink: 0,
+    }}>
       {[['Todos', onAll], ['Limpar', onNone]].map(([lbl, fn]) => (
         <button key={lbl} onClick={fn} style={{
           flex:1, padding:'4px 8px', border:'1px solid var(--border)',

@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import NavBar from '../components/NavBar'
-import { PillGroup, Sep, Dropdown, DropItem, DropGroupLabel, DropActions } from '../components/Filtros'
+import { PillGroup, Sep, Dropdown, DropItem, DropGroupLabel, DropActions, DropScrollBody } from '../components/Filtros'
 import { TabelaPrevisibilidade } from '../components/Tabela'
 
 export default function Previsibilidade({ obras, goTo, current, total }) {
@@ -54,32 +54,41 @@ export default function Previsibilidade({ obras, goTo, current, total }) {
             value={sortMode}
             onChange={setSortMode}
             options={[
-              { value: 'grupo', label: 'Por Grupo' },
-              { value: 'abc-geral', label: 'ABC - Geral' },
-              { value: 'abc-poros', label: 'ABC - % Poros' },
+              { value: 'grupo',     label: 'Por Grupo'    },
+              { value: 'abc-geral', label: 'ABC - Geral'  },
+              { value: 'abc-poros', label: 'ABC - % Poros'},
             ]}
           />
           <Sep/>
+
           <Dropdown label="Grupos" count={selGroups.size} totalCount={groups.length}>
-            {groups.map(g => <DropItem key={g} label={g} checked={selGroups.has(g)} onChange={c => toggleGroup(g, c)}/>)}
             <DropActions
               onAll={() => { setSelGroups(new Set(groups)); setSelObras(new Set(obras.map(o => o.num))) }}
               onNone={() => { setSelGroups(new Set()); setSelObras(new Set()) }}
             />
+            <DropScrollBody>
+              {groups.map(g => (
+                <DropItem key={g} label={g} checked={selGroups.has(g)} onChange={c => toggleGroup(g, c)}/>
+              ))}
+            </DropScrollBody>
           </Dropdown>
+
           <Dropdown label="Obras" count={selObras.size} totalCount={obras.length}>
-            {groups.map(g => (
-              <div key={g}>
-                <DropGroupLabel label={g}/>
-                {obras.filter(o => o.consorcio === g).map(o => (
-                  <DropItem key={o.num} label={<><b>{o.num}</b>&nbsp;{o.nome}</>} checked={selObras.has(o.num)} onChange={c => toggleObra(o.num, c)}/>
-                ))}
-              </div>
-            ))}
             <DropActions
               onAll={() => setSelObras(new Set(obras.map(o => o.num)))}
               onNone={() => setSelObras(new Set())}
             />
+            <DropScrollBody>
+              {groups.map(g => (
+                <div key={g}>
+                  <DropGroupLabel label={g}/>
+                  {obras.filter(o => o.consorcio === g).map(o => (
+                    <DropItem key={o.num} label={<><b>{o.num}</b>&nbsp;{o.nome}</>}
+                      checked={selObras.has(o.num)} onChange={c => toggleObra(o.num, c)}/>
+                  ))}
+                </div>
+              ))}
+            </DropScrollBody>
           </Dropdown>
         </div>
       </div>
