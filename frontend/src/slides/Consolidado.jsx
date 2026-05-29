@@ -1,9 +1,9 @@
 import { useState, useMemo } from 'react'
 import NavBar from '../components/NavBar'
 import { PillGroup, Sep, Dropdown, DropItem, DropGroupLabel, DropActions, DropScrollBody } from '../components/Filtros'
-import { TabelaAcumulado } from '../components/Tabela'
+import { TabelaConsolidado } from '../components/Tabela'
 
-export default function Acumulado({ obras, goTo, current, total }) {
+export default function Consolidado({ obras, goTo, current, total }) {
   const [metric,    setMetric]    = useState('geral')
   const [sortMode,  setSortMode]  = useState('grupo')
   const [selGroups, setSelGroups] = useState(() => new Set(obras.map(o => o.consorcio).filter(Boolean)))
@@ -34,10 +34,10 @@ export default function Acumulado({ obras, goTo, current, total }) {
       }}>
         <div>
           <div style={{ fontSize: 9.5, fontWeight: 600, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 3 }}>
-            Obras <span style={{ color: 'var(--accent)' }}>›</span> Acumulado
+            Obras <span style={{ color: 'var(--accent)' }}>›</span> Consolidado
           </div>
           <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--navy)', lineHeight: 1 }}>
-            {metric === 'geral' ? 'Acumulado Geral' : 'Acumulado % Poros'}
+            {metric === 'geral' ? 'Consolidado Geral' : 'Consolidado % Poros'}
           </div>
         </div>
 
@@ -46,9 +46,8 @@ export default function Acumulado({ obras, goTo, current, total }) {
             value={sortMode}
             onChange={setSortMode}
             options={[
-              { value: 'grupo', label: 'Por Grupo'     },
-              { value: '2026',  label: 'ABC 2026'    },
-              { value: 'total', label: 'ABC Acumulado'    },
+              { value: 'grupo',      label: 'Grupo'   },
+              { value: 'resultado',  label: 'ABC Resultado'},
             ]}
           />
           <Sep />
@@ -99,7 +98,7 @@ export default function Acumulado({ obras, goTo, current, total }) {
           ? <div style={{ textAlign: 'center', padding: 48, color: 'var(--text-dim)', fontSize: 13 }}>
               Nenhuma obra selecionada
             </div>
-          : <TabelaAcumulado obras={filtered} metric={metric} sortMode={sortMode} />
+          : <TabelaConsolidado obras={filtered} metric={metric} sortMode={sortMode} />
         }
       </div>
 

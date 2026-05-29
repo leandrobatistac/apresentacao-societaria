@@ -7,10 +7,12 @@ import CapaObras from './slides/CapaObras'
 import Acumulado from './slides/Acumulado'
 import Previsibilidade from './slides/Previsibilidade'
 import CapaPrevisibilidade from './slides/CapaPrevisibilidade'
+import CapaConsolidado from './slides/CapaConsolidado'
 import CapaEquipamentos from './slides/CapaEquipamentos'
 import Equipamentos from './slides/Equipamentos'
+import Consolidado from './slides/Consolidado'
 
-const TOTAL = 7
+const TOTAL = 9
 
 const variants = {
   enter:  (d) => ({ opacity: 0, x: d > 0 ? 50 : -50 }),
@@ -84,13 +86,15 @@ export default function App() {
           transition={{ duration:.32, ease:[.4,0,.2,1] }}
           style={{ position:'absolute', inset:0 }}
         >
-          {current === 0 && <CapaGeral          obras={obras}   {...nav} />}
-          {current === 1 && <CapaObras                          {...nav} />}
-          {current === 2 && <Acumulado          obras={obras}   {...nav} />}
-          {current === 3 && <CapaPrevisibilidade                {...nav} />}
-          {current === 4 && <Previsibilidade    obras={obras}   {...nav} />}
-          {current === 5 && <CapaEquipamentos                   {...nav} />}
-          {current === 6 && <Equipamentos       groups={groups} {...nav} />}
+          {current === 0 && <CapaGeral           obras={obras}   {...nav} />}
+          {current === 1 && <CapaObras                           {...nav} />}
+          {current === 2 && <Acumulado           obras={obras}   {...nav} />}
+          {current === 3 && <CapaPrevisibilidade                 {...nav} />}
+          {current === 4 && <Previsibilidade     obras={obras}   {...nav} />}
+          {current === 5 && <CapaConsolidado                     {...nav} />}
+          {current === 6 && <Consolidado         obras={obras}   {...nav} />}
+          {current === 7 && <CapaEquipamentos                    {...nav} />}
+          {current === 8 && <Equipamentos        groups={groups} {...nav} />}
         </motion.div>
       </AnimatePresence>
     </div>

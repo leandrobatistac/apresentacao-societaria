@@ -1,7 +1,8 @@
 import NavBar from '../components/NavBar'
 
-const FOTO  = '/foto-obra1.png'
-const NAVY  = '#07111f'
+const FOTO   = '/foto-obra1.png'
+const NAVY   = '#1e3a5f'   // azul referência
+const DARK   = '#0d0a42'   // azul escuro original → usado no label
 const ACCENT = '#2563eb'
 
 export default function CapaGeral({ obras, goTo, current, total }) {
@@ -14,7 +15,7 @@ export default function CapaGeral({ obras, goTo, current, total }) {
       background: NAVY,
     }}>
       <div style={{ flex:1, display:'flex', overflow:'hidden', position:'relative' }}>
-        {/* Linha flat única — atravessa todo o slide */}
+        {/* Linha flat única */}
         <div style={{
           position:'absolute', top:0, left:0, right:0,
           height:3, background: ACCENT,
@@ -44,7 +45,6 @@ export default function CapaGeral({ obras, goTo, current, total }) {
               width:360, height:360, borderRadius:'50%',
               border:'1px solid rgba(255,255,255,.03)',
             }}/>
-
           </div>
 
           {/* Logo */}
@@ -68,12 +68,13 @@ export default function CapaGeral({ obras, goTo, current, total }) {
 
           {/* Título */}
           <div style={{ position:'relative', flex:1, display:'flex', flexDirection:'column', justifyContent:'flex-start', paddingTop:72 }}>
+            {/* Label em azul escuro */}
             <div style={{
               display:'inline-flex', alignItems:'center', gap:8,
               fontSize:12, fontWeight:600, letterSpacing:'.18em', textTransform:'uppercase',
-              color: ACCENT, marginBottom:20,
+              color: DARK, marginBottom:20,
             }}>
-              <div style={{ width:20, height:1, background: ACCENT }}/>
+              <div style={{ width:20, height:1, background: DARK }}/>
               Apresentação Societária
             </div>
 
@@ -126,13 +127,12 @@ export default function CapaGeral({ obras, goTo, current, total }) {
           />
           <div style={{
             position:'absolute', inset:0,
-            background:`linear-gradient(to right, ${NAVY} 0%, rgba(7,17,31,.45) 32%, transparent 68%)`,
+            background:`linear-gradient(to right, ${NAVY} 0%, rgba(30,58,95,.45) 32%, transparent 68%)`,
           }}/>
           <div style={{
             position:'absolute', inset:0,
-            background:'linear-gradient(to bottom, rgba(7,17,31,.35) 0%, transparent 25%, transparent 72%, rgba(7,17,31,.25) 100%)',
+            background:'linear-gradient(to bottom, rgba(30,58,95,.35) 0%, transparent 25%, transparent 72%, rgba(30,58,95,.25) 100%)',
           }}/>
-
         </div>
 
       </div>
