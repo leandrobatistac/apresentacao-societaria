@@ -15,6 +15,24 @@ export default function Consolidado({ obras, goTo, current, total }) {
     [obras, selGroups, selObras]
   )
 
+  // Total Geral fixo: calculado sobre TODAS as obras, só muda com metric (Geral / % Poros)
+  const totaisFixos = useMemo(() => {
+    const isPoros = metric === 'poros'
+    let rec = 0, desp = 0, res = 0
+    obras.forEach(o => {
+      const rawRec  = (o.at_rec  || 0) + (o.p_rec  || 0) + (o.ad_rec  || 0)
+      const rawDesp = (o.at_desp || 0) + (o.p_desp || 0) + (o.ad_desp || 0)
+      const rawRes  = (o.at_res  || 0) + (o.p_res  || 0) + (o.ad_res  || 0)
+      const r = isPoros ? rawRec  * (o.pct ?? 1) : rawRec
+      const d = isPoros ? rawDesp * (o.pct ?? 1) : rawDesp
+      const s = isPoros ? rawRes  * (o.pct ?? 1) : rawRes
+      rec  += isNaN(r) ? 0 : r
+      desp += isNaN(d) ? 0 : d
+      res  += isNaN(s) ? 0 : s
+    })
+    return { rec, desp, res, margin: rec ? res / rec : null }
+  }, [obras, metric])
+
   function toggleGroup(g, checked) {
     const ng = new Set(selGroups); if (checked) ng.add(g); else ng.delete(g); setSelGroups(ng)
     const no = new Set(selObras); obras.filter(o => o.consorcio === g).forEach(o => checked ? no.add(o.num) : no.delete(o.num)); setSelObras(no)
@@ -47,7 +65,7 @@ export default function Consolidado({ obras, goTo, current, total }) {
             onChange={setSortMode}
             options={[
               { value: 'grupo',      label: 'Grupo'   },
-              { value: 'resultado',  label: 'ABC Resultado'},
+              { value: 'resultado',  label: 'ABC Resultado' },
             ]}
           />
           <Sep />
@@ -98,7 +116,12 @@ export default function Consolidado({ obras, goTo, current, total }) {
           ? <div style={{ textAlign: 'center', padding: 48, color: 'var(--text-dim)', fontSize: 13 }}>
               Nenhuma obra selecionada
             </div>
-          : <TabelaConsolidado obras={filtered} metric={metric} sortMode={sortMode} />
+          : <TabelaConsolidado
+              obras={filtered}
+              totaisFixos={totaisFixos}
+              metric={metric}
+              sortMode={sortMode}
+            />
         }
       </div>
 

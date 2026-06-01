@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useObras } from './hooks/useObras'
 import { useObra1000 } from './hooks/useObra1000'
+import { usePatrimonio } from './hooks/usePatrimonio'
 import CapaGeral from './slides/CapaGeral'
 import CapaObras from './slides/CapaObras'
 import Acumulado from './slides/Acumulado'
@@ -55,8 +56,9 @@ function ErrorScreen({ error }) {
 export default function App() {
   const [current, setCurrent]     = useState(0)
   const [direction, setDirection] = useState(1)
-  const { obras, loading: l1, error: e1 } = useObras()
-  const { groups, loading: l2, error: e2 } = useObra1000()
+  const { obras,      loading: l1, error: e1 } = useObras()
+  const { groups,     loading: l2, error: e2 } = useObra1000()
+  const { patrimonio, loading: l3, error: e3 } = usePatrimonio()
 
   const goTo = useCallback((idx) => {
     if (idx < 0 || idx >= TOTAL) return
@@ -73,8 +75,8 @@ export default function App() {
     return () => window.removeEventListener('keydown', fn)
   }, [current, goTo])
 
-  if (l1 || l2) return <LoadingScreen />
-  if (e1 || e2) return <ErrorScreen error={e1 || e2} />
+  if (l1 || l2 || l3) return <LoadingScreen />
+  if (e1 || e2 || e3) return <ErrorScreen error={e1 || e2 || e3} />
 
   const nav = { goTo, current, total: TOTAL }
 
@@ -86,15 +88,15 @@ export default function App() {
           transition={{ duration:.32, ease:[.4,0,.2,1] }}
           style={{ position:'absolute', inset:0 }}
         >
-          {current === 0 && <CapaGeral           obras={obras}   {...nav} />}
-          {current === 1 && <CapaObras                           {...nav} />}
-          {current === 2 && <Acumulado           obras={obras}   {...nav} />}
-          {current === 3 && <CapaPrevisibilidade                 {...nav} />}
-          {current === 4 && <Previsibilidade     obras={obras}   {...nav} />}
-          {current === 5 && <CapaConsolidado                     {...nav} />}
-          {current === 6 && <Consolidado         obras={obras}   {...nav} />}
-          {current === 7 && <CapaEquipamentos                    {...nav} />}
-          {current === 8 && <Equipamentos        groups={groups} {...nav} />}
+          {current === 0 && <CapaGeral           obras={obras}                      {...nav} />}
+          {current === 1 && <CapaObras                                               {...nav} />}
+          {current === 2 && <Acumulado           obras={obras}                      {...nav} />}
+          {current === 3 && <CapaPrevisibilidade                                    {...nav} />}
+          {current === 4 && <Previsibilidade     obras={obras}                      {...nav} />}
+          {current === 5 && <CapaConsolidado                                        {...nav} />}
+          {current === 6 && <Consolidado         obras={obras}                      {...nav} />}
+          {current === 7 && <CapaEquipamentos                                       {...nav} />}
+          {current === 8 && <Equipamentos        groups={groups} patrimonio={patrimonio} {...nav} />}
         </motion.div>
       </AnimatePresence>
     </div>

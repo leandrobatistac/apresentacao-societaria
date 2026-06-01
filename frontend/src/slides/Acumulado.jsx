@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef } from 'react'
 import NavBar from '../components/NavBar'
 import { PillGroup, Sep, Dropdown, DropItem, DropGroupLabel, DropActions, DropScrollBody } from '../components/Filtros'
 import { TabelaAcumulado } from '../components/Tabela'
@@ -9,15 +9,21 @@ export default function Acumulado({ obras, goTo, current, total }) {
   const [selGroups, setSelGroups] = useState(() => new Set(obras.map(o => o.consorcio).filter(Boolean)))
   const [selObras,  setSelObras]  = useState(() => new Set(obras.map(o => o.num)))
 
-  const groups = useMemo(() => [...new Set(obras.map(o => o.consorcio).filter(Boolean))], [obras])
+  // Lista completa congelada na primeira montagem — nunca muda com filtros
+  const todasObras = useRef(obras).current
+
+  const groups = useMemo(() => [...new Set(todasObras.map(o => o.consorcio).filter(Boolean))], [todasObras])
+
   const filtered = useMemo(() =>
-    obras.filter(o => selGroups.has(o.consorcio) && selObras.has(o.num)),
-    [obras, selGroups, selObras]
+    todasObras.filter(o => selGroups.has(o.consorcio) && selObras.has(o.num)),
+    [todasObras, selGroups, selObras]
   )
 
   function toggleGroup(g, checked) {
     const ng = new Set(selGroups); if (checked) ng.add(g); else ng.delete(g); setSelGroups(ng)
-    const no = new Set(selObras); obras.filter(o => o.consorcio === g).forEach(o => checked ? no.add(o.num) : no.delete(o.num)); setSelObras(no)
+    const no = new Set(selObras)
+    todasObras.filter(o => o.consorcio === g).forEach(o => checked ? no.add(o.num) : no.delete(o.num))
+    setSelObras(no)
   }
   function toggleObra(num, checked) {
     const n = new Set(selObras); if (checked) n.add(num); else n.delete(num); setSelObras(n)
@@ -46,9 +52,9 @@ export default function Acumulado({ obras, goTo, current, total }) {
             value={sortMode}
             onChange={setSortMode}
             options={[
-              { value: 'grupo', label: 'Por Grupo'     },
-              { value: '2026',  label: 'ABC 2026'    },
-              { value: 'total', label: 'ABC Acumulado'    },
+              { value: 'grupo', label: 'Por Grupo'      },
+              { value: '2026',  label: 'ABC 2026'        },
+              { value: 'total', label: 'ABC Acumulado'   },
             ]}
           />
           <Sep />
@@ -64,7 +70,7 @@ export default function Acumulado({ obras, goTo, current, total }) {
 
           <Dropdown label="Grupos" count={selGroups.size} totalCount={groups.length}>
             <DropActions
-              onAll={() => { setSelGroups(new Set(groups)); setSelObras(new Set(obras.map(o => o.num))) }}
+              onAll={() => { setSelGroups(new Set(groups)); setSelObras(new Set(todasObras.map(o => o.num))) }}
               onNone={() => { setSelGroups(new Set()); setSelObras(new Set()) }}
             />
             <DropScrollBody>
@@ -74,16 +80,16 @@ export default function Acumulado({ obras, goTo, current, total }) {
             </DropScrollBody>
           </Dropdown>
 
-          <Dropdown label="Obras" count={selObras.size} totalCount={obras.length}>
+          <Dropdown label="Obras" count={selObras.size} totalCount={todasObras.length}>
             <DropActions
-              onAll={() => setSelObras(new Set(obras.map(o => o.num)))}
+              onAll={() => setSelObras(new Set(todasObras.map(o => o.num)))}
               onNone={() => setSelObras(new Set())}
             />
             <DropScrollBody>
               {groups.map(g => (
                 <div key={g}>
                   <DropGroupLabel label={g} />
-                  {obras.filter(o => o.consorcio === g).map(o => (
+                  {todasObras.filter(o => o.consorcio === g).map(o => (
                     <DropItem key={o.num} label={<><b>{o.num}</b>&nbsp;{o.nome}</>}
                       checked={selObras.has(o.num)} onChange={c => toggleObra(o.num, c)} />
                   ))}
@@ -99,7 +105,12 @@ export default function Acumulado({ obras, goTo, current, total }) {
           ? <div style={{ textAlign: 'center', padding: 48, color: 'var(--text-dim)', fontSize: 13 }}>
               Nenhuma obra selecionada
             </div>
-          : <TabelaAcumulado obras={filtered} metric={metric} sortMode={sortMode} />
+          : <TabelaAcumulado
+              obras={filtered}
+              obrasAll={todasObras}
+              metric={metric}
+              sortMode={sortMode}
+            />
         }
       </div>
 

@@ -41,6 +41,23 @@ app.get('/api/obra1000', async (req, res) => {
   }
 });
 
+let cachePatrimonio = null;
+
+app.get('/api/patrimonio', async (req, res) => {
+  try {
+    if (!cachePatrimonio) {
+      console.log('Buscando dados de Patrimônio...');
+      const response = await axios.get(process.env.PATRIMONIO_CSV_URL);
+      cachePatrimonio = response.data;
+      console.log('Patrimônio carregado e cacheado.');
+    }
+    res.send(cachePatrimonio);
+  } catch (err) {
+    console.error('Erro ao buscar Patrimônio:', err.message);
+    res.status(500).json({ error: 'Erro ao carregar dados' });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Backend rodando em http://localhost:${PORT}`);
 });

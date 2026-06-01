@@ -33,6 +33,23 @@ const BADGE_LABELS = {
 
 const gc = (n) => GROUP_COLORS[n] || { bg: '#f8fafc', text: '#64748b', border: '#e2e8f0', accent: '#64748b' }
 
+// ── Equipamentos vendidos ─────────────────────────────────
+const VENDIDOS = new Set(['TE02', 'CB21', 'CB23', 'CB26'])
+
+// ── Monta lookup de patrimônio: frota → { valorMercado, valorPoros } ──
+function buildPatrimonioMap(patrimonio = []) {
+  const map = {}
+  patrimonio.forEach(grupo => {
+    grupo.itens.forEach(item => {
+      map[item.frota] = {
+        valorMercado: item.valorMercado,
+        valorPoros:   item.valorPoros,
+      }
+    })
+  })
+  return map
+}
+
 const BADGE_W = 165
 const HDR = '#1e3a5f'
 
@@ -55,57 +72,36 @@ const pctColors = (s) => {
   return { bg: '#f1f5f9', color: 'var(--text-dim)' }
 }
 
-// Nunca usa eq.res dos dados — sempre calcula
 const calcRes = (rec, desp) => {
   if (rec === null && desp === null) return null
   return (rec ?? 0) - (desp ?? 0)
 }
 
-// Equipamento tem dados? (ignora zeros totais)
 const hasData = (eq) => (eq.rec ?? 0) !== 0 || (eq.desp ?? 0) !== 0
 
-// ── Colgroup: 13 colunas com widths fixas ────────────────
-// Com tableLayout:fixed + colgroup, o colSpan da linha 1 do thead
-// vai cobrir exatamente a mesma largura que as células individuais
-// da linha 2. Isso resolve o desalinhamento de cabeçalho definitivamente.
-//
-// Colunas: [Grupo | Frota | Desc] [GAP] [Rec|Desp|Res|%] [GAP] [Rec|Desp|Res|%]
-//              1       2      3     4      5   6   7  8    9     10  11  12  13
-
+// ── Colgroup ─────────────────────────────────────────────
 function TableColGroup({ isResumo }) {
   if (isResumo) {
-    // Resumo: sem Frota/Desc — Grupo sozinho (col 1), depois igual
     return (
       <colgroup>
-        <col style={{ width: 220 }}/>          {/* Grupo */}
-        <col style={{ width: 12 }}/>           {/* GAP */}
-        <col style={{ width: 90 }}/>           {/* Receita */}
-        <col style={{ width: 90 }}/>           {/* Despesa */}
-        <col style={{ width: 90 }}/>           {/* Resultado */}
-        <col style={{ width: 68 }}/>           {/* % */}
-        <col style={{ width: 12 }}/>           {/* GAP */}
-        <col style={{ width: 90 }}/>           {/* Receita */}
-        <col style={{ width: 90 }}/>           {/* Despesa */}
-        <col style={{ width: 90 }}/>           {/* Resultado */}
-        <col style={{ width: 68 }}/>           {/* % */}
+        <col style={{ width: 220 }}/>
+        <col style={{ width: 12 }}/>
+        <col style={{ width: 90 }}/><col style={{ width: 90 }}/><col style={{ width: 90 }}/><col style={{ width: 68 }}/>
+        <col style={{ width: 12 }}/>
+        <col style={{ width: 90 }}/><col style={{ width: 90 }}/><col style={{ width: 90 }}/><col style={{ width: 68 }}/>
       </colgroup>
     )
   }
   return (
     <colgroup>
-      <col style={{ width: BADGE_W + 24 }}/>   {/* Grupo: 189px */}
-      <col style={{ width: 60 }}/>             {/* Frota */}
-      <col style={{ width: 150 }}/>            {/* Desc: fixo, não absorve tudo */}
-      <col style={{ width: 12 }}/>             {/* GAP */}
-      <col style={{ width: 90 }}/>             {/* Receita */}
-      <col style={{ width: 90 }}/>             {/* Despesa */}
-      <col style={{ width: 90 }}/>             {/* Resultado */}
-      <col style={{ width: 68 }}/>             {/* % */}
-      <col style={{ width: 12 }}/>             {/* GAP */}
-      <col style={{ width: 90 }}/>             {/* Receita */}
-      <col style={{ width: 90 }}/>             {/* Despesa */}
-      <col style={{ width: 90 }}/>             {/* Resultado */}
-      <col style={{ width: 68 }}/>             {/* % */}
+      <col style={{ width: BADGE_W + 24 }}/>
+      <col style={{ width: 60 }}/>
+      <col style={{ width: 150 }}/>
+      <col style={{ width: 90 }}/>
+      <col style={{ width: 12 }}/>
+      <col style={{ width: 90 }}/><col style={{ width: 90 }}/><col style={{ width: 90 }}/><col style={{ width: 68 }}/>
+      <col style={{ width: 12 }}/>
+      <col style={{ width: 90 }}/><col style={{ width: 90 }}/><col style={{ width: 90 }}/><col style={{ width: 68 }}/>
     </colgroup>
   )
 }
@@ -119,9 +115,9 @@ const thBase = {
   padding: '7px 12px', textAlign: 'center', whiteSpace: 'nowrap',
 }
 
-function TH({ children, span, bL, bR, bT, roundTL, roundTR }) {
+function TH({ children, span, rowSpan, bL, bR, bT, roundTL, roundTR }) {
   return (
-    <th colSpan={span || 1} style={{
+    <th colSpan={span || 1} rowSpan={rowSpan || 1} style={{
       ...thBase,
       borderTopLeftRadius:  roundTL ? 8 : 0,
       borderTopRightRadius: roundTR ? 8 : 0,
@@ -133,7 +129,6 @@ function TH({ children, span, bL, bR, bT, roundTL, roundTR }) {
   )
 }
 
-// TH da segunda linha (sem borda superior — a primeira linha já fecha)
 function TH2({ children, bL, bR }) {
   return (
     <th style={{
@@ -146,7 +141,6 @@ function TH2({ children, bL, bR }) {
   )
 }
 
-// GAP: célula transparente que serve como espaço visual entre blocos
 const GAP_STYLE = { width: 12, padding: 0, background: 'transparent', border: 'none' }
 const GapTD = () => <td style={GAP_STYLE}/>
 const GapTH = () => <th style={{ ...GAP_STYLE, background: 'transparent' }}/>
@@ -188,7 +182,7 @@ const cellBase = {
   transition: 'background .1s',
 }
 
-function EquipRow({ item, isResumo }) {
+function EquipRow({ item, isResumo, patrimonioMap = {} }) {
   const [hov, setHov] = useState(false)
   const bg = hov ? 'var(--surface2)' : 'var(--surface)'
   const pct = GROUP_PCT[item.group] || 1
@@ -197,6 +191,9 @@ function EquipRow({ item, isResumo }) {
   const pRec  = item.rec  !== null ? item.rec  * pct : null
   const pDesp = item.desp !== null ? item.desp * pct : null
   const pRes  = calcRes(pRec, pDesp)
+
+  const pat     = patrimonioMap[item.code] || null
+  const vendido = VENDIDOS.has(item.code)
 
   const td = (content, opts = {}) => (
     <td style={{
@@ -211,6 +208,14 @@ function EquipRow({ item, isResumo }) {
     }}>{content}</td>
   )
 
+  const frotaBadge = vendido ? (
+    <span style={{
+      display: 'inline-block', padding: '1px 6px', borderRadius: 4,
+      background: '#fef08a', color: '#854d0e', border: '1px solid #fde047',
+      fontSize: 10, fontWeight: 700, letterSpacing: '.04em',
+    }}>{item.code || '—'}</span>
+  ) : (item.code || '—')
+
   return (
     <tr onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}>
       {isResumo ? (
@@ -218,14 +223,15 @@ function EquipRow({ item, isResumo }) {
       ) : (
         <>
           {td(<GroupBadge name={item.group}/>, { bL: true })}
-          {td(item.code || '—', { bold: true, nowrap: true })}
-          {td(item.nome,         { bold: true, left: true, nowrap: true, bR: true })}
+          {td(frotaBadge, { bold: !vendido, nowrap: true })}
+          {td(item.nome, { bold: true, left: true, nowrap: true })}
+          {td(pat ? fmt(pat.valorPoros) : '—', { num: true, dim: !pat, bR: true })}
         </>
       )}
       <GapTD/>
       {td(fmt(item.rec),  { num: true, bL: true })}
       {td(fmt(item.desp), { num: true })}
-      {td(fmt(gRes),       { num: true, res: true, v: gRes })}
+      {td(fmt(gRes),      { num: true, res: true, v: gRes })}
       {td(<PctBadge value={fmtPct(gRes, item.rec)}/>, { bR: true })}
       <GapTD/>
       {td(fmt(pRec),  { num: true, bL: true })}
@@ -236,14 +242,14 @@ function EquipRow({ item, isResumo }) {
   )
 }
 
-// ── Linha de espaço (1 linha de respiro antes do Diversas) ─
+// ── Linha de espaço ──────────────────────────────────────
 function SpacerRow({ cols }) {
   return (
     <tr><td colSpan={cols} style={{ padding: '6px 0', border: 'none', background: 'var(--bg)' }}/></tr>
   )
 }
 
-// ── Cabeçalho da seção Diversas (mesmo azul do header) ───
+// ── Cabeçalho da seção Diversas ──────────────────────────
 function DiversasHeader({ cols }) {
   return (
     <tr>
@@ -261,7 +267,7 @@ function DiversasHeader({ cols }) {
 }
 
 // ── Linha de total ───────────────────────────────────────
-function TotalRow({ gRec, gDesp, gRes, pRec, pDesp, pRes, labelCols, totalCols }) {
+function TotalRow({ gRec, gDesp, gRes, pRec, pDesp, pRes, labelCols, patTotal }) {
   const tc = (content, opts = {}) => (
     <td style={{
       padding: '7px 10px', textAlign: 'center',
@@ -284,9 +290,11 @@ function TotalRow({ gRec, gDesp, gRes, pRec, pDesp, pRes, labelCols, totalCols }
         color: 'var(--text)', textAlign: 'center',
         background: 'var(--surface2)',
         borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)',
-        borderLeft: '1px solid var(--border)', borderRight: '1px solid var(--border)',
+        borderLeft: '1px solid var(--border)',
+        borderRight: patTotal !== undefined ? 'none' : '1px solid var(--border)',
         borderBottomLeftRadius: 8,
       }}>Total Geral</td>
+      {patTotal !== undefined && tc(fmt(patTotal), { bR: true, rBR: true })}
       <GapTD/>
       {tc(fmt(gRec),  { bL: true, rBL: true })}
       {tc(fmt(gDesp))}
@@ -301,38 +309,36 @@ function TotalRow({ gRec, gDesp, gRes, pRec, pDesp, pRes, labelCols, totalCols }
   )
 }
 
-// ── Tabela principal (usada tanto no resumo quanto no detalhe) ─
+// ── Tabela principal ─────────────────────────────────────
 function MainTable({ isResumo, children }) {
-  // totalCols: resumo tem 11 colunas (1+gap+4+gap+4), detalhe tem 13 (3+gap+4+gap+4)
-  const COLS = isResumo ? 11 : 13
-  const LABEL_COLS = isResumo ? 1 : 3
+  const COLS       = isResumo ? 11 : 14
+  const LABEL_COLS = isResumo ? 1  : 3
 
   return (
     <table style={{
       width: '100%',
       borderCollapse: 'separate',
       borderSpacing: 0,
-      tableLayout: 'fixed',   // ← chave: com colgroup, garante alinhamento perfeito
+      tableLayout: 'fixed',
     }}>
       <TableColGroup isResumo={isResumo}/>
       <thead>
-        {/* Linha 1: agrupamentos */}
         <tr>
-          <TH span={LABEL_COLS} bT bL bR roundTL roundTR>{isResumo ? 'Grupo' : 'Equipamento'}</TH>
+          <TH span={isResumo ? LABEL_COLS : LABEL_COLS + 1} rowSpan={isResumo ? 2 : 1} bT bL bR roundTL roundTR>
+            {isResumo ? 'Grupo' : 'Equipamento'}
+          </TH>
           <GapTH/>
           <TH span={4} bT bL bR roundTL roundTR>Geral</TH>
           <GapTH/>
           <TH span={4} bT bL bR roundTL roundTR>% Poros</TH>
         </tr>
-        {/* Linha 2: colunas individuais — com tableLayout:fixed, alinha exatamente */}
         <tr>
-          {isResumo ? (
-            <TH2 bL bR>—</TH2>
-          ) : (
+          {!isResumo && (
             <>
               <TH2 bL>Grupo</TH2>
               <TH2>Frota</TH2>
-              <TH2 bR>Descrição</TH2>
+              <TH2>Descrição</TH2>
+              <TH2 bR>R$ Poros</TH2>
             </>
           )}
           <GapTH/>
@@ -348,7 +354,6 @@ function MainTable({ isResumo, children }) {
         </tr>
       </thead>
       <tbody>
-        {/* children recebem COLS e LABEL_COLS via props ou Context — passamos via render prop */}
         {typeof children === 'function' ? children({ COLS, LABEL_COLS }) : children}
       </tbody>
     </table>
@@ -372,8 +377,8 @@ function ResumoGeral({ groups }) {
 
   let tGRec = 0, tGDesp = 0, tPRec = 0, tPDesp = 0
   items.forEach(i => {
-    tGRec  += i.rec;       tGDesp  += i.desp
-    tPRec  += i.rec * i.pct; tPDesp += i.desp * i.pct
+    tGRec  += i.rec;         tGDesp  += i.desp
+    tPRec  += i.rec * i.pct; tPDesp  += i.desp * i.pct
   })
 
   return (
@@ -395,7 +400,7 @@ function ResumoGeral({ groups }) {
 }
 
 // ── Tela de detalhe de grupo ─────────────────────────────
-function GrupoDetalhe({ groupData, sortMode, selEquips }) {
+function GrupoDetalhe({ groupData, sortMode, selEquips, patrimonioMap }) {
   const pct = GROUP_PCT[groupData.name] || 1
 
   const equipItems = useMemo(() => (groupData.equipamentos || []).map(eq => ({
@@ -424,10 +429,12 @@ function GrupoDetalhe({ groupData, sortMode, selEquips }) {
   }, [equipItems, selEquips, sortMode, pct])
 
   const totals = useMemo(() => {
-    let tGRec = 0, tGDesp = 0
+    let tGRec = 0, tGDesp = 0, tPatPoros = 0
     ;[...filteredEquip, ...diversasItems].forEach(i => {
       tGRec  += i.rec  ?? 0
       tGDesp += i.desp ?? 0
+      const pat = patrimonioMap[i.code]
+      if (pat?.valorPoros) tPatPoros += pat.valorPoros
     })
     const tGRes = tGRec - tGDesp
     return {
@@ -435,15 +442,16 @@ function GrupoDetalhe({ groupData, sortMode, selEquips }) {
       tPRec:  tGRec  * pct,
       tPDesp: tGDesp * pct,
       tPRes:  tGRes  * pct,
+      tPatPoros,
     }
-  }, [filteredEquip, diversasItems, pct])
+  }, [filteredEquip, diversasItems, pct, patrimonioMap])
 
   return (
     <MainTable>
       {({ COLS, LABEL_COLS }) => (
         <>
           {filteredEquip.map((item, i) => (
-            <EquipRow key={`e-${item.code || item.nome}-${i}`} item={item}/>
+            <EquipRow key={`e-${item.code || item.nome}-${i}`} item={item} patrimonioMap={patrimonioMap}/>
           ))}
 
           {diversasItems.length > 0 && (
@@ -451,7 +459,7 @@ function GrupoDetalhe({ groupData, sortMode, selEquips }) {
               <SpacerRow cols={COLS}/>
               <DiversasHeader cols={COLS}/>
               {diversasItems.map((item, i) => (
-                <EquipRow key={`d-${item.nome}-${i}`} item={item}/>
+                <EquipRow key={`d-${item.nome}-${i}`} item={item} patrimonioMap={patrimonioMap}/>
               ))}
             </>
           )}
@@ -460,6 +468,7 @@ function GrupoDetalhe({ groupData, sortMode, selEquips }) {
             gRec={totals.tGRec} gDesp={totals.tGDesp} gRes={totals.tGRes}
             pRec={totals.tPRec} pDesp={totals.tPDesp} pRes={totals.tPRes}
             labelCols={LABEL_COLS}
+            patTotal={totals.tPatPoros}
           />
         </>
       )}
@@ -481,7 +490,6 @@ function Sidebar({ groups, active, onChange }) {
       padding: '20px 14px', display: 'flex', flexDirection: 'column',
       gap: 4, overflowY: 'auto',
     }}>
-      {/* Seção: Visão */}
       <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--text-dim)', padding: '0 8px 8px' }}>Visão</div>
 
       <SidebarItem
@@ -500,7 +508,6 @@ function Sidebar({ groups, active, onChange }) {
       {ordered.map(g => {
         const c = gc(g.name)
         const isActive = active === g.name
-        // Conta só equipamentos com dados (mesma regra da tabela)
         const count = (g.equipamentos || []).filter(hasData).length
         return (
           <SidebarItem
@@ -538,10 +545,12 @@ function SidebarItem({ label, sub, isActive, accent, activeBg, activeText, onCli
 }
 
 // ── Componente principal ─────────────────────────────────
-export default function Equipamentos({ groups, goTo, current, total }) {
+export default function Equipamentos({ groups, patrimonio = [], goTo, current, total }) {
   const [active,    setActive]    = useState('__resumo__')
   const [sortMode,  setSortMode]  = useState('grupo')
   const [selEquips, setSelEquips] = useState(() => new Set())
+
+  const patrimonioMap = useMemo(() => buildPatrimonioMap(patrimonio), [patrimonio])
 
   const groupData = useMemo(() => groups.find(g => g.name === active), [groups, active])
 
@@ -553,7 +562,6 @@ export default function Equipamentos({ groups, goTo, current, total }) {
     }))
   }, [groupData])
 
-  // Ao trocar de grupo, seleciona todos os equipamentos daquele grupo
   useMemo(() => {
     if (!groupData) return
     setSelEquips(new Set(equipItems.map(i => `${i.group}::${i.code || i.nome}`)))
@@ -625,6 +633,7 @@ export default function Equipamentos({ groups, goTo, current, total }) {
               groupData={groupData}
               sortMode={sortMode}
               selEquips={selEquips}
+              patrimonioMap={patrimonioMap}
             />
           ) : null}
         </div>
