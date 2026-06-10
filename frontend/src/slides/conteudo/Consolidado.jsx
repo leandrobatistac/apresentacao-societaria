@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
-import NavBar from '../components/NavBar'
-import { PillGroup, Sep, Dropdown, DropItem, DropGroupLabel, DropActions, DropScrollBody } from '../components/Filtros'
-import { TabelaConsolidado } from '../components/Tabela'
+import NavBar from '../../components/NavBar'
+import { PillGroup, Sep, Dropdown, DropItem, DropGroupLabel, DropActions, DropScrollBody } from '../../components/Filtros'
+import { TabelaConsolidado } from '../../components/tabelas'
 
 export default function Consolidado({ obras, goTo, current, total }) {
   const [metric,    setMetric]    = useState('geral')

@@ -1,4 +1,4 @@
-import NavBar from '../components/NavBar'
+import NavBar from '../../components/NavBar'
 
 export default function CapaObras({ goTo, current, total }) {
   return (
@@ -54,7 +54,7 @@ export default function CapaObras({ goTo, current, total }) {
             marginBottom:16,
           }}>
             Resultado de Obras<br/>
-            <span style={{ color:'var(--navy-light)', fontWeight:500 }}>Acumulado</span>
+            <span style={{ color:'var(--navy-light)', fontWeight:500 }}>Acompanhamento Mensal</span>
           </div>
 
           {/* Divider */}

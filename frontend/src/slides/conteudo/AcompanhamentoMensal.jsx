@@ -1,17 +1,15 @@
 import { useState, useMemo, useRef } from 'react'
-import NavBar from '../components/NavBar'
-import { PillGroup, Sep, Dropdown, DropItem, DropGroupLabel, DropActions, DropScrollBody } from '../components/Filtros'
-import { TabelaAcumulado } from '../components/Tabela'
+import NavBar from '../../components/NavBar'
+import { PillGroup, Sep, Dropdown, DropItem, DropGroupLabel, DropActions, DropScrollBody } from '../../components/Filtros'
+import { TabelaAcompanhamento, TabelaAcumuladoAnual } from '../../components/tabelas'
+import { PERIODO } from '../../config/periodo'
 
-export default function Acumulado({ obras, goTo, current, total }) {
+export default function AcompanhamentoMensal({ obras, goTo, current, total }) {
   const [metric,    setMetric]    = useState('geral')
-  const [sortMode,  setSortMode]  = useState('grupo')
   const [selGroups, setSelGroups] = useState(() => new Set(obras.map(o => o.consorcio).filter(Boolean)))
   const [selObras,  setSelObras]  = useState(() => new Set(obras.map(o => o.num)))
 
-  // Lista completa congelada na primeira montagem — nunca muda com filtros
   const todasObras = useRef(obras).current
-
   const groups = useMemo(() => [...new Set(todasObras.map(o => o.consorcio).filter(Boolean))], [todasObras])
 
   const filtered = useMemo(() =>
@@ -40,24 +38,14 @@ export default function Acumulado({ obras, goTo, current, total }) {
       }}>
         <div>
           <div style={{ fontSize: 9.5, fontWeight: 600, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--text-dim)', marginBottom: 3 }}>
-            Obras <span style={{ color: 'var(--accent)' }}>›</span> Acumulado
+            Obras <span style={{ color: 'var(--accent)' }}>›</span> Acompanhamento Mensal
           </div>
           <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--navy)', lineHeight: 1 }}>
-            {metric === 'geral' ? 'Acumulado Geral' : 'Acumulado % Poros'}
+            {metric === 'geral' ? 'Acompanhamento Mensal (Geral)' : 'Acompanhamento Mensal (% Poros)'}
           </div>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <PillGroup
-            value={sortMode}
-            onChange={setSortMode}
-            options={[
-              { value: 'grupo', label: 'Por Grupo'      },
-              { value: '2026',  label: 'ABC 2026'        },
-              { value: 'total', label: 'ABC Acumulado'   },
-            ]}
-          />
-          <Sep />
           <PillGroup
             value={metric}
             onChange={setMetric}
@@ -105,11 +93,10 @@ export default function Acumulado({ obras, goTo, current, total }) {
           ? <div style={{ textAlign: 'center', padding: 48, color: 'var(--text-dim)', fontSize: 13 }}>
               Nenhuma obra selecionada
             </div>
-          : <TabelaAcumulado
+          : <TabelaAcumuladoAnual
               obras={filtered}
               obrasAll={todasObras}
               metric={metric}
-              sortMode={sortMode}
             />
         }
       </div>

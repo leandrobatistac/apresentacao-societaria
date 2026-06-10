@@ -3,17 +3,19 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useObras } from './hooks/useObras'
 import { useObra1000 } from './hooks/useObra1000'
 import { usePatrimonio } from './hooks/usePatrimonio'
-import CapaGeral from './slides/CapaGeral'
-import CapaObras from './slides/CapaObras'
-import Acumulado from './slides/Acumulado'
-import Previsibilidade from './slides/Previsibilidade'
-import CapaPrevisibilidade from './slides/CapaPrevisibilidade'
-import CapaConsolidado from './slides/CapaConsolidado'
-import CapaEquipamentos from './slides/CapaEquipamentos'
-import Equipamentos from './slides/Equipamentos'
-import Consolidado from './slides/Consolidado'
+import CapaGeral               from './slides/capas/CapaGeral'
+import CapaObras               from './slides/capas/CapaObras'
+import CapaPrevisibilidade     from './slides/capas/CapaPrevisibilidade'
+import CapaEquipamentos        from './slides/capas/CapaEquipamentos'
+import CapaConsolidado         from './slides/capas/CapaConsolidado'
+import AcompanhamentoMensal    from './slides/conteudo/AcompanhamentoMensal'
+import AcumuladoAnualHistorico from './slides/conteudo/AcumuladoAnualHistorico'
+import Previsibilidade         from './slides/conteudo/Previsibilidade'
+import Equipamentos            from './slides/conteudo/Equipamentos'
+import Consolidado             from './slides/conteudo/Consolidado'
+import CapaAcumulado from './slides/capas/CapaAcumulado'
 
-const TOTAL = 9
+const TOTAL = 8
 
 const variants = {
   enter:  (d) => ({ opacity: 0, x: d > 0 ? 50 : -50 }),
@@ -88,15 +90,15 @@ export default function App() {
           transition={{ duration:.32, ease:[.4,0,.2,1] }}
           style={{ position:'absolute', inset:0 }}
         >
-          {current === 0 && <CapaGeral           obras={obras}                      {...nav} />}
-          {current === 1 && <CapaObras                                               {...nav} />}
-          {current === 2 && <Acumulado           obras={obras}                      {...nav} />}
-          {current === 3 && <CapaPrevisibilidade                                    {...nav} />}
-          {current === 4 && <Previsibilidade     obras={obras}                      {...nav} />}
-          {current === 5 && <CapaConsolidado                                        {...nav} />}
-          {current === 6 && <Consolidado         obras={obras}                      {...nav} />}
-          {current === 7 && <CapaEquipamentos                                       {...nav} />}
-          {current === 8 && <Equipamentos        groups={groups} patrimonio={patrimonio} {...nav} />}
+          {current === 0 && <CapaGeral                obras={obras}                           {...nav} />}
+          {current === 1 && <CapaObras                                                         {...nav} />}
+          {current === 2 && <AcompanhamentoMensal      obras={obras}                           {...nav} />}
+          {current === 3 && <CapaAcumulado      obras={obras}                           {...nav} />}
+          {current === 4 && <AcumuladoAnualHistorico   obras={obras}                           {...nav} />}
+          {current === 5 && <CapaPrevisibilidade                                               {...nav} />}
+          {current === 6 && <Previsibilidade           obras={obras}                           {...nav} />}
+          {current === 7 && <CapaEquipamentos                                                  {...nav} />}
+          {current === 8 && <Equipamentos              groups={groups} patrimonio={patrimonio}  {...nav} />}
         </motion.div>
       </AnimatePresence>
     </div>

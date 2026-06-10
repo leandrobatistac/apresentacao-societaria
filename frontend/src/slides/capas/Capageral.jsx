@@ -1,8 +1,8 @@
-import NavBar from '../components/NavBar'
+import NavBar from '../../components/NavBar'
 
-const FOTO   = '/foto-obra1.png'
+const FOTO   = '/foto-obra3.jpeg'
 const NAVY   = '#1e3a5f'   // azul referência
-const DARK   = '#0d0a42'   // azul escuro original → usado no label
+const DARK   = '#00aeff'   // azul escuro original → usado no label
 const ACCENT = '#2563eb'
 
 export default function CapaGeral({ obras, goTo, current, total }) {

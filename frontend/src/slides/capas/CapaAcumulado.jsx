@@ -1,6 +1,7 @@
-import NavBar from '../components/NavBar'
+import NavBar from '../../components/NavBar'
+import { PERIODO } from '../../config/periodo'
 
-export default function CapaEquipamentos({ goTo, current, total }) {
+export default function CapaAcumulado({ goTo, current, total }) {
   return (
     <div style={{
       width:'100%', height:'100%',
@@ -31,7 +32,7 @@ export default function CapaEquipamentos({ goTo, current, total }) {
 
         {/* Conteúdo */}
         <div style={{ position:'relative', textAlign:'center', padding:'0 10%' }}>
-          {/* Tag / Badge */}
+          {/* Tag */}
           <div style={{
             display:'inline-flex', alignItems:'center', gap:8,
             fontSize:10, fontWeight:600, letterSpacing:'.2em',
@@ -41,7 +42,7 @@ export default function CapaEquipamentos({ goTo, current, total }) {
             padding:'5px 14px', borderRadius:20,
           }}>
             <div style={{ width:5, height:5, borderRadius:'50%', background:'var(--accent)' }}/>
-            Equipamentos
+            Obras
           </div>
 
           {/* Título */}
@@ -53,8 +54,8 @@ export default function CapaEquipamentos({ goTo, current, total }) {
             letterSpacing:'-.02em',
             marginBottom:16,
           }}>
-            Obra 1000<br/>
-            <span style={{ color:'var(--navy-light)', fontWeight:500 }}>Acumulado</span>
+            Resultado de Obras<br/>
+            <span style={{ color:'var(--navy-light)', fontWeight:500 }}>Acumulado Anual e Histórico</span>
           </div>
 
           {/* Divider */}
@@ -69,7 +70,7 @@ export default function CapaEquipamentos({ goTo, current, total }) {
             fontSize:13, fontWeight:500,
             color:'var(--text-muted)', letterSpacing:'.06em',
           }}>
-            Referência: <span style={{ color:'var(--navy)', fontWeight:600 }}>ABR / 2026</span>
+            Referência: <span style={{ color:'var(--navy)', fontWeight:600 }}>{PERIODO.labelMes.toUpperCase()}</span>
           </div>
         </div>
       </div>

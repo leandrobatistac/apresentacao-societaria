@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
-import NavBar from '../components/NavBar'
-import { PillGroup, Sep, Dropdown, DropItem, DropActions, DropScrollBody } from '../components/Filtros'
+import NavBar from '../../components/NavBar'
+import { PillGroup, Sep, Dropdown, DropItem, DropActions, DropScrollBody } from '../../components/Filtros'
 
 // ── Constantes ───────────────────────────────────────────
 const GROUP_PCT = {
