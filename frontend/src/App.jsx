@@ -14,8 +14,12 @@ import Previsibilidade         from './slides/conteudo/Previsibilidade'
 import Equipamentos            from './slides/conteudo/Equipamentos'
 import Consolidado             from './slides/conteudo/Consolidado'
 import CapaAcumulado from './slides/capas/CapaAcumulado'
+import CapaPrevisibilidade2027 from './slides/capas/CapaPrevisibilidade2027'
+import Previsibilidade2027     from './slides/conteudo/Previsibilidade2027'
+import CapaTimeline  from './slides/capas/CapaTimeline'
+import TimelineObras from './slides/conteudo/TimelineObras'
 
-const TOTAL = 8
+const TOTAL = 13
 
 const variants = {
   enter:  (d) => ({ opacity: 0, x: d > 0 ? 50 : -50 }),
@@ -90,15 +94,19 @@ export default function App() {
           transition={{ duration:.32, ease:[.4,0,.2,1] }}
           style={{ position:'absolute', inset:0 }}
         >
-          {current === 0 && <CapaGeral                obras={obras}                           {...nav} />}
-          {current === 1 && <CapaObras                                                         {...nav} />}
-          {current === 2 && <AcompanhamentoMensal      obras={obras}                           {...nav} />}
-          {current === 3 && <CapaAcumulado      obras={obras}                           {...nav} />}
-          {current === 4 && <AcumuladoAnualHistorico   obras={obras}                           {...nav} />}
-          {current === 5 && <CapaPrevisibilidade                                               {...nav} />}
-          {current === 6 && <Previsibilidade           obras={obras}                           {...nav} />}
-          {current === 7 && <CapaEquipamentos                                                  {...nav} />}
-          {current === 8 && <Equipamentos              groups={groups} patrimonio={patrimonio}  {...nav} />}
+          {current === 0  && <CapaGeral                obras={obras}                           {...nav} />}
+          {current === 1  && <CapaObras                                                         {...nav} />}
+          {current === 2  && <AcompanhamentoMensal      obras={obras}                           {...nav} />}
+          {current === 3  && <CapaAcumulado                                                     {...nav} />}
+          {current === 4  && <AcumuladoAnualHistorico   obras={obras}                           {...nav} />}
+          {current === 5  && <CapaPrevisibilidade                                               {...nav} />}
+          {current === 6  && <Previsibilidade           obras={obras}                           {...nav} />}
+          {current === 7  && <CapaPrevisibilidade2027                                           {...nav} />}
+          {current === 8  && <Previsibilidade2027       obras={obras}                           {...nav} />}
+          {current === 9  && <CapaTimeline                                                      {...nav} />}
+          {current === 10 && <TimelineObras             obras={obras}                           {...nav} />}
+          {current === 11 && <CapaEquipamentos                                                  {...nav} />}
+          {current === 12 && <Equipamentos              groups={groups} patrimonio={patrimonio}  {...nav} />}
         </motion.div>
       </AnimatePresence>
     </div>
