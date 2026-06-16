@@ -3,17 +3,18 @@ import NavBar from '../../components/NavBar'
 import { Sep, Dropdown, DropItem, DropGroupLabel, DropActions, DropScrollBody, PillGroup } from '../../components/Filtros'
 import { PERIODO } from '../../config/periodo'
 import { fmt, applyPoros, GroupBadge, groupSortKey } from '../../components/tabelas/shared'
+import { EVOLUCAO_TOTAL_GERAL } from '../../config/evolucaoMensal'
 
 const MESES_FIXOS = ['jan', 'fev', 'mar']
 const MESES_ANO   = ['abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
 const LABELS      = { jan:'Jan', fev:'Fev', mar:'Mar', abr:'Abr', mai:'Mai', jun:'Jun', jul:'Jul', ago:'Ago', set:'Set', out:'Out', nov:'Nov', dez:'Dez' }
 
-const COL_GRUPO = 110
-const COL_NUM   = 44
-const COL_NOME  = 190
-const COL_MES   = 90
-const COL_TOTAL = 90
-const BADGE_W   = 74
+const COL_GRUPO = 125
+const COL_NUM   = 50
+const COL_NOME  = 217
+const COL_MES   = 103
+const COL_TOTAL = 103
+const BADGE_W   = 85
 
 const TODOS_MESES = [...MESES_FIXOS, ...MESES_ANO]
 
@@ -58,97 +59,109 @@ function TimelineRow({ o, mesFiltro, metric }) {
   const prevVal   = ap(prevRaw || null)
   const hasPrev   = prevRaw !== 0
 
-  const total    = [...resFixos.map(v => v ?? 0), ...resFeitos.map(v => v ?? 0), prevVal ?? 0].reduce((a, b) => a + b, 0)
+  const somaFixos = resFixos.reduce((a, v) => a + (v ?? 0), 0)
+  const temFixos  = resFixos.some(v => v !== null)
+
+  const total    = [somaFixos, ...resFeitos.map(v => v ?? 0), prevVal ?? 0].reduce((a, b) => a + b, 0)
   const totalPos = total >= 0
 
   const cellStyle = (extra = {}) => ({
-    padding: '5px 4px',
+    padding: '6px 5px',
     borderBottom: '1px solid var(--border)',
     verticalAlign: 'middle',
     background: hov ? 'var(--surface2)' : 'var(--surface)',
     ...extra,
   })
 
-  const resBadge = (val) => {
-    const c = badgeRes(val)
-    if (val !== null && c) {
-      return (
-        <div style={{
-          width: BADGE_W, margin: '0 auto',
-          background: c.bg, color: c.text, border: `1px solid ${c.border}`,
-          borderRadius: 6, padding: '3px 0',
-          fontSize: 10, fontWeight: 700,
-          whiteSpace: 'nowrap', textAlign: 'center',
-        }}>
-          {fmt(val)}
-        </div>
-      )
-    }
-    return <span style={{ color: 'var(--text-dim)', fontSize: 11, display: 'block', textAlign: 'center' }}>—</span>
+const resBadge = (val) => {
+  const c = badgeRes(val)
+  if (val !== null && c) {
+    return (
+      <div style={{
+        width: BADGE_W, margin: '0 auto',
+        background: c.bg, color: c.text, border: `1px solid ${c.border}`,
+        borderRadius: 7, padding: '4px 0',
+        fontSize: 11, fontWeight: 700,
+        whiteSpace: 'nowrap', textAlign: 'center',
+      }}>
+        {fmt(val)}
+      </div>
+    )
   }
+  return (
+    <div style={{
+      width: BADGE_W, margin: '0 auto',
+      background: NO_PREV_STYLE.bg, color: NO_PREV_STYLE.text,
+      border: `1px solid ${NO_PREV_STYLE.border}`,
+      borderRadius: 7, padding: '4px 0',
+      fontSize: 11, fontWeight: 700,
+      whiteSpace: 'nowrap', textAlign: 'center',
+    }}>
+      —
+    </div>
+  )
+}
+
+  const barBadge = (val, style) => (
+    <div style={{
+      background: style.bg, color: style.text,
+      border: `1px solid ${style.border}`,
+      borderRadius: 7, padding: '4px 13px',
+      fontSize: 11, fontWeight: 700,
+      whiteSpace: 'nowrap', textAlign: 'center',
+      width: '100%', boxSizing: 'border-box',
+    }}>
+      {val}
+    </div>
+  )
 
   return (
     <tr onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}>
-      <td style={cellStyle({ padding: '5px 8px' })}>
+      <td style={cellStyle({ padding: '6px 9px' })}>
         <GroupBadge name={o.consorcio} />
       </td>
-      <td style={cellStyle({ fontWeight: 700, fontSize: 11, color: 'var(--text)', textAlign: 'center' })}>
+      <td style={cellStyle({ fontWeight: 700, fontSize: 12, color: 'var(--text)', textAlign: 'center' })}>
         {o.num}
       </td>
-      <td style={cellStyle({ padding: '5px 12px', fontWeight: 600, fontSize: 11, color: 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' })}>
+      <td style={cellStyle({ padding: '6px 13px', fontWeight: 600, fontSize: 12, color: 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' })}>
         {o.nome}
       </td>
 
-      {resFixos.map((val, i) => (
-        <td key={MESES_FIXOS[i]} style={cellStyle({ textAlign: 'center' })}>
-          {resBadge(val)}
-        </td>
-      ))}
+      {/* Jan/Fev/Mar — badge acumulada com colSpan=3 */}
+      <td colSpan={3} style={cellStyle({ padding: '6px 7px' })}>
+        {temFixos
+          ? barBadge(fmt(somaFixos), badgeRes(somaFixos) || NO_PREV_STYLE)
+          : barBadge('—', NO_PREV_STYLE)
+        }
+      </td>
 
+      {/* Abr até mesFiltro — badges individuais */}
       {resFeitos.map((val, i) => (
         <td key={mesesFeitos[i]} style={cellStyle({ textAlign: 'center' })}>
           {resBadge(val)}
         </td>
       ))}
 
+      {/* Meses restantes — previsibilidade ou badge cinza */}
       {mesesRestant.length > 0 && (
-        hasPrev ? (
-          <td colSpan={mesesRestant.length} style={cellStyle({ padding: '5px 6px' })}>
-            <div style={{
-              background: PREV_STYLE.bg, color: PREV_STYLE.text,
-              border: `1px solid ${PREV_STYLE.border}`,
-              borderRadius: 6, padding: '3px 12px',
-              fontSize: 10, fontWeight: 700,
-              whiteSpace: 'nowrap', textAlign: 'center',
-              width: '100%', boxSizing: 'border-box',
-            }}>
-              {fmt(prevVal)}
-            </div>
-          </td>
-        ) : (
-          <td colSpan={mesesRestant.length} style={cellStyle({ padding: '5px 6px' })}>
-            <div style={{
-              background: NO_PREV_STYLE.bg, color: NO_PREV_STYLE.text,
-              border: `1px solid ${NO_PREV_STYLE.border}`,
-              borderRadius: 6, padding: '3px 12px',
-              fontSize: 10, fontWeight: 700,
-              whiteSpace: 'nowrap', textAlign: 'center',
-              width: '100%', boxSizing: 'border-box',
-            }}>
-              —
-            </div>
-          </td>
-        )
+        hasPrev
+          ? <td colSpan={mesesRestant.length} style={cellStyle({ padding: '6px 7px' })}>
+              {barBadge(fmt(prevVal), PREV_STYLE)}
+            </td>
+          : <td colSpan={mesesRestant.length} style={cellStyle({ padding: '6px 7px' })}>
+              {barBadge('—', NO_PREV_STYLE)}
+            </td>
       )}
 
+      {/* Total */}
       <td style={cellStyle({ textAlign: 'center' })}>
         <div style={{
           width: BADGE_W, margin: '0 auto',
           background: totalPos ? '#dcfce7' : '#fee2e2',
           color:      totalPos ? '#166534' : '#991b1b',
           border:     `1px solid ${totalPos ? '#86efac' : '#fca5a5'}`,
-          borderRadius: 6, padding: '3px 0',
-          fontSize: 10, fontWeight: 700,
+          borderRadius: 7, padding: '4px 0',
+          fontSize: 11, fontWeight: 700,
           whiteSpace: 'nowrap', textAlign: 'center',
         }}>
           {fmt(total)}
@@ -170,7 +183,7 @@ function TotaisRow({ obras, mesFiltro, metric }) {
   const totGeral  = [...totFixos, ...totFeitos, totPrev].reduce((a, b) => a + b, 0)
 
   const base = {
-    padding: '7px 4px', fontWeight: 700, fontSize: 11,
+    padding: '8px 5px', fontWeight: 700, fontSize: 12,
     color: 'rgba(255,255,255,.9)', background: '#1e3a5f',
     textAlign: 'center', whiteSpace: 'nowrap',
     fontVariantNumeric: 'tabular-nums',
@@ -178,11 +191,68 @@ function TotaisRow({ obras, mesFiltro, metric }) {
 
   return (
     <tr>
-      <td colSpan={3} style={{ ...base, borderBottomLeftRadius: 8, padding: '7px 12px' }}>Total Geral</td>
-      {totFixos.map((v, i)  => <td key={`f${i}`} style={base}>{fmt(v)}</td>)}
+      <td colSpan={3} style={{ ...base, borderBottomLeftRadius: 10, padding: '8px 13px' }}>Total Geral</td>
+      {/* Jan/Fev/Mar acumulados numa célula só */}
+      <td colSpan={3} style={base}>{fmt(totFixos.reduce((a, b) => a + b, 0))}</td>
       {totFeitos.map((v, i) => <td key={`r${i}`} style={base}>{fmt(v)}</td>)}
       {mesesRest.length > 0 && <td colSpan={mesesRest.length} style={base}>{fmt(totPrev)}</td>}
-      <td style={{ ...base, borderBottomRightRadius: 8 }}>{fmt(totGeral)}</td>
+      <td style={{ ...base, borderBottomRightRadius: 10 }}>{fmt(totGeral)}</td>
+    </tr>
+  )
+}
+
+function EvolucaoRow({ mesFiltro, metric }) {
+  const idxFiltro    = MESES_ANO.indexOf(mesFiltro)
+  const mesesVisiveis = new Set([...MESES_FIXOS, ...MESES_ANO.slice(0, idxFiltro + 1)])
+
+  const wrapStyle = {
+    padding: '9px 5px',
+    background: 'var(--surface)',
+    borderTop: '1px solid var(--border)',
+    borderBottom: '1px solid var(--border)',
+  }
+
+  const labelStyle = {
+    ...wrapStyle,
+    padding: '9px 13px',
+    fontWeight: 700, color: 'var(--navy)', fontSize: 11,
+    letterSpacing: '.06em', textTransform: 'uppercase',
+    whiteSpace: 'nowrap', textAlign: 'center',
+    borderLeft: '1px solid var(--border)',
+    borderTopLeftRadius: 10, borderBottomLeftRadius: 10,
+  }
+
+  const evoBadge = (val) => {
+    const c = badgeRes(val)
+    const style = (val !== null && val !== undefined && c) ? c : NO_PREV_STYLE
+    return (
+      <div style={{
+        width: BADGE_W, margin: '0 auto',
+        background: style.bg, color: style.text, border: `1px solid ${style.border}`,
+        borderRadius: 7, padding: '4px 0',
+        fontSize: 11, fontWeight: 700,
+        whiteSpace: 'nowrap', textAlign: 'center',
+      }}>
+        {(val === null || val === undefined) ? '—' : fmt(val)}
+      </div>
+    )
+  }
+
+  return (
+    <tr>
+      <td colSpan={3} style={labelStyle}>
+        Evolução Mensal
+      </td>
+      {TODOS_MESES.map(m => {
+        const visivel = mesesVisiveis.has(m)
+        const val = EVOLUCAO_TOTAL_GERAL[m]?.[metric] ?? null
+        return (
+          <td key={m} style={{ ...wrapStyle, textAlign: 'center' }}>
+            {visivel ? evoBadge(val) : null}
+          </td>
+        )
+      })}
+      <td style={{ ...wrapStyle, borderRight: '1px solid var(--border)', borderTopRightRadius: 10, borderBottomRightRadius: 10 }}></td>
     </tr>
   )
 }
@@ -235,28 +305,28 @@ export default function TimelineObras({ obras, goTo, current, total }) {
 
   const thStyle = {
     background: '#1e3a5f', color: 'rgba(255,255,255,.8)',
-    fontSize: 11, fontWeight: 600, letterSpacing: '.08em',
-    textTransform: 'uppercase', padding: '6px 8px',
+    fontSize: 12, fontWeight: 600, letterSpacing: '.08em',
+    textTransform: 'uppercase', padding: '7px 9px',
     textAlign: 'center', whiteSpace: 'nowrap',
   }
 
   return (
     <div style={{ width:'100%', height:'100%', display:'flex', flexDirection:'column', background:'var(--bg)' }}>
       <div style={{
-        flexShrink:0, padding:'14px 36px',
+        flexShrink:0, padding:'16px 41px',
         borderBottom:'1px solid var(--border)', background:'var(--surface)',
-        display:'flex', alignItems:'center', justifyContent:'space-between', gap:16,
+        display:'flex', alignItems:'center', justifyContent:'space-between', gap:18,
       }}>
         <div>
-          <div style={{ fontSize:9.5, fontWeight:600, letterSpacing:'.12em', textTransform:'uppercase', color:'var(--text-dim)', marginBottom:3 }}>
+          <div style={{ fontSize:10, fontWeight:600, letterSpacing:'.12em', textTransform:'uppercase', color:'var(--text-dim)', marginBottom:4 }}>
             Obras <span style={{ color:'var(--accent)' }}>›</span> Timeline
           </div>
-          <div style={{ fontSize:20, fontWeight:700, color:'var(--navy)', lineHeight:1 }}>
+          <div style={{ fontSize:23, fontWeight:700, color:'var(--navy)', lineHeight:1 }}>
             {metric === 'geral' ? 'Timeline de Resultados (Geral)' : 'Timeline de Resultados (% Poros)'}
           </div>
         </div>
 
-        <div style={{ display:'flex', alignItems:'center', gap:12 }}>
+        <div style={{ display:'flex', alignItems:'center', gap:13 }}>
           <PillGroup
             value={sortMode}
             onChange={setSortMode}
@@ -304,9 +374,9 @@ export default function TimelineObras({ obras, goTo, current, total }) {
         </div>
       </div>
 
-      <div style={{ flex:1, overflowY:'auto', overflowX:'auto', padding:'18px 36px', display:'flex', justifyContent:'center' }}>
+      <div style={{ flex:1, overflowY:'auto', overflowX:'auto', padding:'21px 41px 40px', display:'flex', justifyContent:'center' }}>
         {filtered.length === 0
-          ? <div style={{ textAlign:'center', padding:48, color:'var(--text-dim)', fontSize:13 }}>Nenhuma obra selecionada</div>
+          ? <div style={{ textAlign:'center', padding:58, color:'var(--text-dim)', fontSize:16 }}>Nenhuma obra selecionada</div>
           : (
             <div style={{ width: tableWidth }}>
               <table style={{ borderCollapse:'separate', borderSpacing:0, tableLayout:'fixed', width: tableWidth }}>
@@ -319,21 +389,25 @@ export default function TimelineObras({ obras, goTo, current, total }) {
                 </colgroup>
                 <thead>
                   <tr>
-                    <th style={{ ...thStyle, borderTopLeftRadius: 8 }}>Grupo</th>
+                    <th style={{ ...thStyle, borderTopLeftRadius: 10 }}>Grupo</th>
                     <th style={thStyle}>#</th>
                     <th style={thStyle}>Nome</th>
+                    {/* Jan/Fev/Mar — cabeçalho individual mas badge acumulada */}
                     {MESES_FIXOS.map(m  => <th key={m} style={thStyle}>{LABELS[m]}</th>)}
                     {mesesFeitos.map(m  => <th key={m} style={thStyle}>{LABELS[m]}</th>)}
                     {mesesRestant.map(m => <th key={m} style={thStyle}>{LABELS[m]}</th>)}
-                    <th style={{ ...thStyle, borderTopRightRadius: 8 }}>Total</th>
+                    <th style={{ ...thStyle, borderTopRightRadius: 10 }}>Total</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filtered.map(o => (
                     <TimelineRow key={o.num} o={o} mesFiltro={mesFiltro} metric={metric} />
                   ))}
-                  <tr><td colSpan={3 + TODOS_MESES.length + 1} style={{ height:6, padding:0, background:'transparent', border:'none' }}/></tr>
+                  <tr><td colSpan={3 + TODOS_MESES.length + 1} style={{ height:7, padding:0, background:'transparent', border:'none' }}/></tr>
                   <TotaisRow obras={filtered} mesFiltro={mesFiltro} metric={metric} />
+                  <tr><td colSpan={3 + TODOS_MESES.length + 1} style={{ height:13, padding:0, background:'transparent', border:'none' }}/></tr>
+                  <EvolucaoRow mesFiltro={mesFiltro} metric={metric} />
+                  <tr><td colSpan={3 + TODOS_MESES.length + 1} style={{ height:24, padding:0, background:'transparent', border:'none' }}/></tr>
                 </tbody>
               </table>
             </div>

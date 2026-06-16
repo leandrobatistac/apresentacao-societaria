@@ -1,7 +1,7 @@
 import { useState, useMemo, useRef } from 'react'
 import NavBar from '../../components/NavBar'
 import { PillGroup, Sep, Dropdown, DropItem, DropGroupLabel, DropActions, DropScrollBody } from '../../components/Filtros'
-import { TabelaAcompanhamento, TabelaAcumuladoAnual } from '../../components/tabelas'
+import { TabelaAcompanhamento } from '../../components/tabelas'
 import { PERIODO } from '../../config/periodo'
 
 export default function AcompanhamentoMensal({ obras, goTo, current, total }) {
@@ -93,7 +93,7 @@ export default function AcompanhamentoMensal({ obras, goTo, current, total }) {
           ? <div style={{ textAlign: 'center', padding: 48, color: 'var(--text-dim)', fontSize: 13 }}>
               Nenhuma obra selecionada
             </div>
-          : <TabelaAcumuladoAnual
+          : <TabelaAcompanhamento
               obras={filtered}
               obrasAll={todasObras}
               metric={metric}

@@ -75,7 +75,7 @@ export default function CapaGeral({ obras, goTo, current, total }) {
               color: DARK, marginBottom:20,
             }}>
               <div style={{ width:20, height:1, background: DARK }}/>
-              Apresentação Societária
+              Apresentação de GPE
             </div>
 
             <div style={{

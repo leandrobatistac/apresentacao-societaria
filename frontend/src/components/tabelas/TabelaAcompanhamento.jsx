@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { PERIODO } from '../../config/periodo'
 import {
-  fmt, fmtPct, applyPoros, isObraZerada, groupSortKey,
+  fmt, fmtPct, applyPoros, isObraZerada, groupSortKey, gc,
   GroupBadge, GAP, GapTD, GapTH, TH, makeTd, buildGroupEntries,
 } from './shared'
 
@@ -70,34 +70,27 @@ function AcompRow({ o, pRec, pDesp, pRes, pMargin, mRec, mDesp, mRes, mMargin })
 }
 
 function AcompSubTotalRow({ group, pRec, pDesp, pRes, pMargin, mRec, mDesp, mRes, mMargin }) {
-  const [hov] = useState(false)
-  const c = { bg: 'var(--surface2)', text: 'var(--text)' }
+  const col = gc(group)
   const s = (extra = {}) => ({
     padding: '5px 12px', textAlign: 'center', fontWeight: 700, fontSize: 11,
-    background: c.bg, color: c.text,
+    background: col.bg, color: col.text,
     borderBottom: '1px solid var(--border)',
     fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap',
     ...extra,
   })
-
-  // Re-import gc for group colors
-  const { gc } = require('./shared')
-  const col = gc(group)
-  const sCol = (extra = {}) => ({ ...s(), background: col.bg, color: col.text, ...extra })
-
   return (
     <tr>
-      <td colSpan={3} style={sCol({ borderLeft: '1px solid var(--border)', borderRight: '1px solid var(--border)' })}>Total {group}</td>
+      <td colSpan={3} style={s({ borderLeft: '1px solid var(--border)', borderRight: '1px solid var(--border)' })}>Total {group}</td>
       <td style={GAP}/>
-      <td style={sCol({ borderLeft: '1px solid var(--border)' })}>{fmt(pRec)}</td>
-      <td style={sCol()}>{fmt(pDesp)}</td>
-      <td style={sCol()}>{fmt(pRes)}</td>
-      <td style={sCol({ borderRight: '1px solid var(--border)' })}>{fmtPct(pMargin)}</td>
+      <td style={s({ borderLeft: '1px solid var(--border)' })}>{fmt(pRec)}</td>
+      <td style={s()}>{fmt(pDesp)}</td>
+      <td style={s()}>{fmt(pRes)}</td>
+      <td style={s({ borderRight: '1px solid var(--border)' })}>{fmtPct(pMargin)}</td>
       <td style={GAP}/>
-      <td style={sCol({ borderLeft: '1px solid var(--border)' })}>{fmt(mRec)}</td>
-      <td style={sCol()}>{fmt(mDesp)}</td>
-      <td style={sCol()}>{fmt(mRes)}</td>
-      <td style={sCol({ borderRight: '1px solid var(--border)' })}>{fmtPct(mMargin)}</td>
+      <td style={s({ borderLeft: '1px solid var(--border)' })}>{fmt(mRec)}</td>
+      <td style={s()}>{fmt(mDesp)}</td>
+      <td style={s()}>{fmt(mRes)}</td>
+      <td style={s({ borderRight: '1px solid var(--border)' })}>{fmtPct(mMargin)}</td>
     </tr>
   )
 }
