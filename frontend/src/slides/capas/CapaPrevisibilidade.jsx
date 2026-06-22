@@ -1,4 +1,5 @@
 import NavBar from '../../components/NavBar'
+import { PERIODO } from '../../config/periodo'
 
 export default function CapaPrevisibilidade({ goTo, current, total }) {
   return (
@@ -71,7 +72,7 @@ export default function CapaPrevisibilidade({ goTo, current, total }) {
             fontSize:13, fontWeight:500,
             color:'var(--text-muted)', letterSpacing:'.06em',
           }}>
-            Referência: <span style={{ color:'var(--navy)', fontWeight:600 }}>ABR / 2026</span>
+            Referência: <span style={{ color:'var(--navy)', fontWeight:600 }}>{PERIODO.labelMes}</span>
           </div>
         </div>
       </div>

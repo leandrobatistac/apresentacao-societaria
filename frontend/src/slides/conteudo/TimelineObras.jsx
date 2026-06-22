@@ -5,9 +5,13 @@ import { PERIODO } from '../../config/periodo'
 import { fmt, applyPoros, GroupBadge, groupSortKey } from '../../components/tabelas/shared'
 import { EVOLUCAO_TOTAL_GERAL } from '../../config/evolucaoMensal'
 
-const MESES_FIXOS = ['jan', 'fev', 'mar']
-const MESES_ANO   = ['abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
-const LABELS      = { jan:'Jan', fev:'Fev', mar:'Mar', abr:'Abr', mai:'Mai', jun:'Jun', jul:'Jul', ago:'Ago', set:'Set', out:'Out', nov:'Nov', dez:'Dez' }
+const TODOS_MESES_ANO = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
+const LABELS          = { jan:'Jan', fev:'Fev', mar:'Mar', abr:'Abr', mai:'Mai', jun:'Jun', jul:'Jul', ago:'Ago', set:'Set', out:'Out', nov:'Nov', dez:'Dez' }
+
+// MESES_FIXOS vem do config — meses que entram agrupados na badge acumulada (Jan...Abr, por ex.)
+// MESES_ANO é o restante do ano, meses individuais que aparecem na timeline
+const MESES_FIXOS = PERIODO.meses
+const MESES_ANO   = TODOS_MESES_ANO.filter(m => !MESES_FIXOS.includes(m))
 
 const COL_GRUPO = 125
 const COL_NUM   = 50
@@ -127,15 +131,15 @@ const resBadge = (val) => {
         {o.nome}
       </td>
 
-      {/* Jan/Fev/Mar — badge acumulada com colSpan=3 */}
-      <td colSpan={3} style={cellStyle({ padding: '6px 7px' })}>
+      {/* Meses fixos (PERIODO.meses) — badge acumulada com colSpan dinâmico */}
+      <td colSpan={MESES_FIXOS.length} style={cellStyle({ padding: '6px 7px' })}>
         {temFixos
           ? barBadge(fmt(somaFixos), badgeRes(somaFixos) || NO_PREV_STYLE)
           : barBadge('—', NO_PREV_STYLE)
         }
       </td>
 
-      {/* Abr até mesFiltro — badges individuais */}
+      {/* Mês atual até mesFiltro — badges individuais */}
       {resFeitos.map((val, i) => (
         <td key={mesesFeitos[i]} style={cellStyle({ textAlign: 'center' })}>
           {resBadge(val)}
@@ -192,8 +196,8 @@ function TotaisRow({ obras, mesFiltro, metric }) {
   return (
     <tr>
       <td colSpan={3} style={{ ...base, borderBottomLeftRadius: 10, padding: '8px 13px' }}>Total Geral</td>
-      {/* Jan/Fev/Mar acumulados numa célula só */}
-      <td colSpan={3} style={base}>{fmt(totFixos.reduce((a, b) => a + b, 0))}</td>
+      {/* Meses fixos acumulados numa célula só */}
+      <td colSpan={MESES_FIXOS.length} style={base}>{fmt(totFixos.reduce((a, b) => a + b, 0))}</td>
       {totFeitos.map((v, i) => <td key={`r${i}`} style={base}>{fmt(v)}</td>)}
       {mesesRest.length > 0 && <td colSpan={mesesRest.length} style={base}>{fmt(totPrev)}</td>}
       <td style={{ ...base, borderBottomRightRadius: 10 }}>{fmt(totGeral)}</td>
@@ -318,7 +322,7 @@ export default function TimelineObras({ obras, goTo, current, total }) {
         display:'flex', alignItems:'center', justifyContent:'space-between', gap:18,
       }}>
         <div>
-          <div style={{ fontSize:10, fontWeight:600, letterSpacing:'.12em', textTransform:'uppercase', color:'var(--text-dim)', marginBottom:4 }}>
+          <div style={{ fontSize:11, fontWeight:600, letterSpacing:'.12em', textTransform:'uppercase', color:'var(--text-dim)', marginBottom:4 }}>
             Obras <span style={{ color:'var(--accent)' }}>›</span> Timeline
           </div>
           <div style={{ fontSize:23, fontWeight:700, color:'var(--navy)', lineHeight:1 }}>
@@ -392,7 +396,7 @@ export default function TimelineObras({ obras, goTo, current, total }) {
                     <th style={{ ...thStyle, borderTopLeftRadius: 10 }}>Grupo</th>
                     <th style={thStyle}>#</th>
                     <th style={thStyle}>Nome</th>
-                    {/* Jan/Fev/Mar — cabeçalho individual mas badge acumulada */}
+                    {/* Meses fixos — cabeçalho individual mas badge acumulada */}
                     {MESES_FIXOS.map(m  => <th key={m} style={thStyle}>{LABELS[m]}</th>)}
                     {mesesFeitos.map(m  => <th key={m} style={thStyle}>{LABELS[m]}</th>)}
                     {mesesRestant.map(m => <th key={m} style={thStyle}>{LABELS[m]}</th>)}

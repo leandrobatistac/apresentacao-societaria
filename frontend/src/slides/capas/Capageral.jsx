@@ -4,6 +4,7 @@ const FOTO   = '/foto-obra3.jpeg'
 const NAVY   = '#1e3a5f'   // azul referência
 const DARK   = '#00aeff'   // azul escuro original → usado no label
 const ACCENT = '#2563eb'
+import { PERIODO } from '../../config/periodo'
 
 export default function CapaGeral({ obras, goTo, current, total }) {
   const groups = [...new Set(obras.map(o => o.consorcio).filter(Boolean))]
@@ -96,7 +97,7 @@ export default function CapaGeral({ obras, goTo, current, total }) {
             display:'flex', alignItems:'center', gap:0,
           }}>
             {[
-              { label:'Referência', value:'ABR / 2026' },
+              { label:'Referência', value: PERIODO.labelMes },
             ].map((item, i) => (
               <div key={i} style={{ paddingRight: i < 2 ? 32 : 0, borderRight: 'none' }}>
                 <div style={{

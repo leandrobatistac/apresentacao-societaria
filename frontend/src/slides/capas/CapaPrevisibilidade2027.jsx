@@ -59,7 +59,7 @@ export default function CapaPrevisibilidade2027({ goTo, current, total }) {
             fontSize:13, fontWeight:500,
             color:'var(--text-muted)', letterSpacing:'.06em',
           }}>
-            Previsão de Receita para <span style={{ color:'var(--navy)', fontWeight:600 }}>2027</span>
+            Previsão de receita
           </div>
         </div>
       </div>
