@@ -22,7 +22,7 @@ export const PERIODO = {
   // Título do 2º quadro da tabela de Acumulado Anual e Histórico
   // Deve refletir o mês atual
   // Exemplo em Maio: 'Acumulado até Mai/26'
-  labelAte: 'Acumulado até Mai/26',
+  labelAte: 'Acumulado Geral até Mai/26',
 
   // Meses já realizados a partir de Abril — controla o filtro e as colunas
   // visíveis na Timeline. Adicionar o novo mês a cada virada.

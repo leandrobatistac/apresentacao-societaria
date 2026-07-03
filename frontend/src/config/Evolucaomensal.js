@@ -9,7 +9,7 @@ export const EVOLUCAO_TOTAL_GERAL = {
   fev: { geral: null, poros: null },
   mar: { geral: null, poros: null },
   abr: { geral: 39218576, poros: 14560727 },
-  mai: { geral: null, poros: null },
+  mai: { geral: 38849840, poros: 13563573 },
   jun: { geral: null, poros: null },
   jul: { geral: null, poros: null },
   ago: { geral: null, poros: null },
