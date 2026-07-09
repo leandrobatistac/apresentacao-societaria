@@ -1,12 +1,15 @@
 import { useState } from 'react'
 
+export const SCALE = 1.25
+export const s = (n) => Math.round(n * SCALE)
+
 export const GROUP_COLORS = {
-  'CONS. SP':    { bg: '#f3e8ff', text: '#6b21a8', border: '#d8b4fe' },
-  'CORTE':       { bg: '#fefce8', text: '#854d0e', border: '#fde047' },
-  'POROS COMIM': { bg: '#fef2f2', text: '#991b1b', border: '#fca5a5' },
-  'GOIÁS':       { bg: '#ecfdf5', text: '#065f46', border: '#6ee7b7' },
-  'POROS':       { bg: '#eff6ff', text: '#1e40af', border: '#93c5fd' },
-  'POROS MHEGA': { bg: '#f8fafc', text: '#334155', border: '#cbd5e1' },
+  'CONS. SP':    { bg: '#e9d5ff', text: '#581c87', border: '#c4b5fd' },
+  'CORTE':       { bg: '#fef3c7', text: '#78350f', border: '#fcd34d' },
+  'POROS COMIM': { bg: '#c9e6ec', text: '#0d2f3a', border: '#4a7f91' },
+  'GOIÁS':       { bg: '#d1fae5', text: '#14532d', border: '#22c55e' },
+  'POROS':       { bg: '#e0edff', text: '#1e3a8a', border: '#60a5fa' },
+  'POROS MHEGA': { bg: '#e2e8f0', text: '#1e293b', border: '#94a3b8' },
 }
 
 export const GROUP_ORDER = ['POROS', 'GOIÁS', 'POROS COMIM', 'CONS. SP', 'CORTE', 'POROS MHEGA']
@@ -51,8 +54,8 @@ export function GroupBadge({ name }) {
   return (
     <div style={{
       background: c.bg, color: c.text, border: `1px solid ${c.border}`,
-      padding: '3px 0', width: 96, textAlign: 'center', margin: '0 auto',
-      borderRadius: 6, fontSize: 10, fontWeight: 700,
+      padding: `${s(3)}px 0`, width: s(96), textAlign: 'center', margin: '0 auto',
+      borderRadius: s(6), fontSize: s(10), fontWeight: 700,
       letterSpacing: '.05em', whiteSpace: 'nowrap',
     }}>
       {name}
@@ -61,29 +64,31 @@ export function GroupBadge({ name }) {
 }
 
 export const baseCell = {
-  padding: '5px 12px',
+  padding: `${s(5)}px ${s(12)}px`,
   borderBottom: '1px solid var(--border)',
   verticalAlign: 'middle',
   transition: 'background .1s',
-  fontSize: 11,
+  fontSize: s(11),
 }
 
-export const GAP = { width: 10, padding: 0, background: 'transparent', border: 'none' }
+export const GAP = { width: s(10), padding: 0, background: 'transparent', border: 'none' }
 export const GapTD = () => <td style={GAP}/>
 export const GapTH = () => <th style={GAP}/>
 
 export function TH({ children, span, roundTL, roundTR }) {
   return (
-    <th colSpan={span} style={{
-      background: '#1e3a5f',
-      color: 'rgba(255,255,255,.8)',
-      fontSize: 11, fontWeight: 600, letterSpacing: '.08em',
-      textTransform: 'uppercase', padding: '6px 12px',
-      textAlign: 'center', whiteSpace: 'nowrap',
-      borderTopLeftRadius:  roundTL ? 8 : 0,
-      borderTopRightRadius: roundTR ? 8 : 0,
-    }}>
-      {children}
+    <th colSpan={span} style={{ padding: 0, border: 'none' }}>
+      <div style={{
+        background: '#1e3a5f',
+        color: 'rgba(255,255,255,.8)',
+        fontSize: s(11), fontWeight: 600, letterSpacing: '.08em',
+        textTransform: 'uppercase', padding: `${s(6)}px ${s(12)}px`,
+        textAlign: 'center', whiteSpace: 'nowrap',
+        borderTopLeftRadius:  roundTL ? s(8) : 0,
+        borderTopRightRadius: roundTR ? s(8) : 0,
+      }}>
+        {children}
+      </div>
     </th>
   )
 }
@@ -97,13 +102,13 @@ export function makeTd(bg) {
       fontWeight: opts.bold || opts.isRes ? 600 : 400,
       whiteSpace: opts.nowrap ? 'nowrap' : 'normal',
       fontVariantNumeric: opts.num ? 'tabular-nums' : undefined,
-      maxWidth: opts.maxWidth,
+      maxWidth: opts.maxWidth ? s(opts.maxWidth) : opts.maxWidth,
       overflow: opts.maxWidth ? 'hidden' : 'visible',
       textOverflow: opts.maxWidth ? 'ellipsis' : 'clip',
       borderLeft:  opts.bL ? '1px solid var(--border)' : 'none',
       borderRight: opts.bR ? '1px solid var(--border)' : 'none',
-      borderBottomLeftRadius:  opts.rBL ? 8 : 0,
-      borderBottomRightRadius: opts.rBR ? 8 : 0,
+      borderBottomLeftRadius:  opts.rBL ? s(8) : 0,
+      borderBottomRightRadius: opts.rBR ? s(8) : 0,
     }}>
       {content}
     </td>

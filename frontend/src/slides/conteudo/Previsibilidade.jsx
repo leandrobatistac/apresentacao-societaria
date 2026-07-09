@@ -4,7 +4,8 @@ import { PillGroup, Sep, Dropdown, DropItem, DropGroupLabel, DropActions, DropSc
 import { TabelaPrevisibilidade } from '../../components/tabelas'
 
 export default function Previsibilidade({ obras, goTo, current, total }) {
-  const [sortMode,  setSortMode]  = useState('grupo')
+  const [metric,    setMetric]    = useState('poros')
+  const [sortMode,  setSortMode]  = useState('abc')
   const [selGroups, setSelGroups] = useState(() => new Set(obras.map(o => o.consorcio).filter(Boolean)))
   const [selObras,  setSelObras]  = useState(() => new Set(obras.map(o => o.num)))
 
@@ -46,17 +47,26 @@ export default function Previsibilidade({ obras, goTo, current, total }) {
             Obras <span style={{ color:'var(--accent)' }}>›</span> Previsibilidade
           </div>
           <div style={{ fontSize:20, fontWeight:700, color:'var(--navy)', lineHeight:1 }}>
-            Previsibilidade 2026 + Aditivos + Prateleira
+            {`Previsibilidade 2026 + Aditivos + Prateleira (${metric === 'geral' ? 'Geral' : '% Poros'})`}
           </div>
         </div>
         <div style={{ display:'flex', alignItems:'center', gap:12 }}>
           <PillGroup
+            value={metric}
+            onChange={setMetric}
+            options={[
+              { value: 'poros', label: '% Poros' },
+              { value: 'geral', label: 'Geral'    },
+            ]}
+          />
+          <Sep/>
+
+          <PillGroup
             value={sortMode}
             onChange={setSortMode}
             options={[
-              { value: 'grupo',     label: 'Por Grupo'    },
-              { value: 'abc-geral', label: 'ABC - Geral'  },
-              { value: 'abc-poros', label: 'ABC - % Poros'},
+              { value: 'abc',   label: 'ABC'       },
+              { value: 'grupo', label: 'Por Grupo' },
             ]}
           />
           <Sep/>
@@ -96,7 +106,7 @@ export default function Previsibilidade({ obras, goTo, current, total }) {
       <div style={{ flex:1, overflowY:'auto', padding:'18px 36px' }}>
         {filtered.length === 0
           ? <div style={{ textAlign:'center', padding:48, color:'var(--text-dim)', fontSize:13 }}>Nenhuma obra selecionada</div>
-          : <TabelaPrevisibilidade obras={filtered} sortMode={sortMode}/>
+          : <TabelaPrevisibilidade obras={filtered} sortMode={sortMode} metric={metric}/>
         }
       </div>
 

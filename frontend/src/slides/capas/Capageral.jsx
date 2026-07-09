@@ -1,144 +1,233 @@
 import NavBar from '../../components/NavBar'
-
-const FOTO   = '/foto-obra3.jpeg'
-const NAVY   = '#1e3a5f'   // azul referência
-const DARK   = '#00aeff'   // azul escuro original → usado no label
-const ACCENT = '#2563eb'
 import { PERIODO } from '../../config/periodo'
 
-export default function CapaGeral({ obras, goTo, current, total }) {
-  const groups = [...new Set(obras.map(o => o.consorcio).filter(Boolean))]
+const FOTO = '/foto-obra3.jpg'
 
+const NAVY = '#1e3a5f'
+const ACCENT = '#2563eb'
+
+export default function CapaGeral({ goTo, current, total }) {
   return (
-    <div style={{
-      width:'100%', height:'100%',
-      display:'flex', flexDirection:'column',
-      background: NAVY,
-    }}>
-      <div style={{ flex:1, display:'flex', overflow:'hidden', position:'relative' }}>
-        {/* Linha flat única */}
-        <div style={{
-          position:'absolute', top:0, left:0, right:0,
-          height:3, background: ACCENT,
-          zIndex:10, pointerEvents:'none',
-        }}/>
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        position: 'relative',
+        overflow: 'hidden',
+        background: NAVY,
+      }}
+    >
+      {/* FOTO */}
+      <img
+        src={FOTO}
+        alt="Obra"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          objectPosition: 'center',
+          filter: 'brightness(.82) saturate(.95)',
+        }}
+      />
 
-        {/* ── ESQUERDA ── */}
-        <div style={{
-          flex:'0 0 52%',
-          background: NAVY,
-          display:'flex', flexDirection:'column',
-          justifyContent:'space-between',
-          padding:'52px 7% 40px',
-          position:'relative',
-          overflow:'hidden',
-          zIndex:1,
-        }}>
-          {/* Decorações */}
-          <div style={{ position:'absolute', inset:0, pointerEvents:'none', overflow:'hidden' }}>
-            <div style={{
-              position:'absolute', bottom:-180, left:-180,
-              width:520, height:520, borderRadius:'50%',
-              border:'1px solid rgba(255,255,255,.04)',
-            }}/>
-            <div style={{
-              position:'absolute', bottom:-110, left:-110,
-              width:360, height:360, borderRadius:'50%',
-              border:'1px solid rgba(255,255,255,.03)',
-            }}/>
-          </div>
+      {/* OVERLAY PRINCIPAL */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: `
+            linear-gradient(
+              90deg,
+              rgba(30,58,95,.95) 0%,
+              rgba(30,58,95,.90) 22%,
+              rgba(30,58,95,.72) 42%,
+              rgba(30,58,95,.30) 68%,
+              rgba(30,58,95,.08) 100%
+            )
+          `,
+        }}
+      />
 
-          {/* Logo */}
-          <div style={{ position:'relative' }}>
-            <img
-              src="/logo.png"
-              alt="Poros"
-              style={{
-                height:76, objectFit:'contain', objectPosition:'left',
-                filter:'brightness(0) invert(1)', display:'block', opacity:.95,
-              }}
-              onError={e => {
-                e.target.style.display = 'none'
-                e.target.nextSibling.style.display = 'block'
-              }}
-            />
-            <div style={{ display:'none', fontSize:22, fontWeight:800, color:'#fff', letterSpacing:'.12em' }}>
-              POROS
-            </div>
-          </div>
+      {/* OVERLAY SUAVE */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background:
+            'linear-gradient(to bottom, rgba(0,0,0,.12), transparent 25%, transparent 75%, rgba(0,0,0,.25))',
+        }}
+      />
 
-          {/* Título */}
-          <div style={{ position:'relative', flex:1, display:'flex', flexDirection:'column', justifyContent:'flex-start', paddingTop:72 }}>
-            {/* Label em azul escuro */}
-            <div style={{
-              display:'inline-flex', alignItems:'center', gap:8,
-              fontSize:12, fontWeight:600, letterSpacing:'.18em', textTransform:'uppercase',
-              color: DARK, marginBottom:20,
-            }}>
-              <div style={{ width:20, height:1, background: DARK }}/>
-              Apresentação de GPE
-            </div>
+      {/* LINHA SUPERIOR */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: 3,
+          background: ACCENT,
+          zIndex: 10,
+        }}
+      />
 
-            <div style={{
-              fontSize:'clamp(28px, 3.2vw, 46px)',
-              fontWeight:700, color:'#fff',
-              lineHeight:1.15, letterSpacing:'-.02em',
-              marginBottom:14,
-            }}>
-              Resultado de Obras,<br/>Equipamentos e Financeiro
-            </div>
-          </div>
-
-          {/* Meta */}
-          <div style={{
-            position:'relative',
-            borderTop:'1px solid rgba(255,255,255,.08)',
-            paddingTop:24,
-            display:'flex', alignItems:'center', gap:0,
-          }}>
-            {[
-              { label:'Referência', value: PERIODO.labelMes },
-            ].map((item, i) => (
-              <div key={i} style={{ paddingRight: i < 2 ? 32 : 0, borderRight: 'none' }}>
-                <div style={{
-                  fontSize:9, fontWeight:600, letterSpacing:'.18em', textTransform:'uppercase',
-                  color:'rgba(255,255,255,.3)', marginBottom:6,
-                }}>
-                  {item.label}
-                </div>
-                <div style={{ fontSize:16, fontWeight:600, color:'#fff', letterSpacing:'.02em' }}>
-                  {item.value}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* ── DIREITA — Foto ── */}
-        <div style={{ flex:'0 0 48%', position:'relative', overflow:'hidden' }}>
+      {/* CONTEÚDO */}
+      <div
+        style={{
+          position: 'relative',
+          zIndex: 5,
+          height: 'calc(100% - 42px)',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          padding: '48px 6%',
+        }}
+      >
+        {/* TOPO */}
+        <div>
           <img
-            src={FOTO}
-            alt="Obra"
+            src="/logo.png"
+            alt="Poros"
             style={{
-              width:'100%', height:'100%',
-              objectFit:'cover', objectPosition:'center',
-              display:'block',
-              filter:'brightness(.72) saturate(.85)',
+              height: 82,
+              objectFit: 'contain',
+              filter: 'brightness(0) invert(1)',
+              opacity: 0.95,
+            }}
+            onError={e => {
+              e.target.style.display = 'none'
+              e.target.nextSibling.style.display = 'block'
             }}
           />
-          <div style={{
-            position:'absolute', inset:0,
-            background:`linear-gradient(to right, ${NAVY} 0%, rgba(30,58,95,.45) 32%, transparent 68%)`,
-          }}/>
-          <div style={{
-            position:'absolute', inset:0,
-            background:'linear-gradient(to bottom, rgba(30,58,95,.35) 0%, transparent 25%, transparent 72%, rgba(30,58,95,.25) 100%)',
-          }}/>
+
+          <div
+            style={{
+              display: 'none',
+              fontSize: 24,
+              fontWeight: 800,
+              color: '#fff',
+            }}
+          >
+            POROS
+          </div>
         </div>
 
+        {/* CENTRO */}
+        <div
+          style={{
+            maxWidth: 780,
+            marginTop: '-60px',
+          }}
+        >
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 10,
+              padding: '8px 16px',
+              borderRadius: 999,
+              background: 'rgba(37,99,235,.12)',
+              border: '1px solid rgba(255,255,255,.12)',
+              backdropFilter: 'blur(10px)',
+              marginBottom: 26,
+            }}
+          >
+            <div
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: '50%',
+                background: ACCENT,
+              }}
+            />
+
+            <span
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                letterSpacing: '.18em',
+                textTransform: 'uppercase',
+                color: '#dbeafe',
+              }}
+            >
+              Apresentação de GPE
+            </span>
+          </div>
+
+          <h1
+            style={{
+              margin: 0,
+              color: '#fff',
+              fontWeight: 700,
+              fontSize: 'clamp(42px, 4vw, 68px)',
+              lineHeight: 1.08,
+              letterSpacing: '-0.03em',
+              textShadow: '0 8px 24px rgba(0,0,0,.25)',
+            }}
+          >
+            Resultado de Obras,
+            <br />
+            Equipamentos e Financeiro
+          </h1>
+        </div>
+
+        {/* RODAPÉ */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'flex-end',
+            justifyContent: 'space-between',
+          }}
+        >
+          <div
+            style={{
+              padding: '22px 28px',
+              borderRadius: 18,
+              background: 'rgba(15,23,42,.42)',
+              backdropFilter: 'blur(14px)',
+              border: '1px solid rgba(255,255,255,.08)',
+            }}
+          >
+            <div
+              style={{
+                fontSize: 10,
+                fontWeight: 600,
+                letterSpacing: '.18em',
+                textTransform: 'uppercase',
+                color: 'rgba(255,255,255,.5)',
+                marginBottom: 6,
+              }}
+            >
+              Referência
+            </div>
+
+            <div
+              style={{
+                color: '#fff',
+                fontWeight: 700,
+                fontSize: 22,
+              }}
+            >
+              {PERIODO.labelMes}
+            </div>
+          </div>
+        </div>
       </div>
 
-      <NavBar current={current} total={total} goTo={goTo}/>
+      {/* NAVBAR */}
+      <div
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 20,
+        }}
+      >
+        <NavBar current={current} total={total} goTo={goTo} />
+      </div>
     </div>
   )
 }

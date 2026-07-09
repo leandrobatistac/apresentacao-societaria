@@ -2,6 +2,12 @@ import { useState, useMemo } from 'react'
 import NavBar from '../../components/NavBar'
 import { PillGroup, Sep, Dropdown, DropItem, DropActions, DropScrollBody } from '../../components/Filtros'
 
+// ── Escala ───────────────────────────────────────────────
+// Mesma abordagem das outras tabelas do projeto: sem zoom/transform,
+// os valores em px já nascem escalados em 25%.
+const SCALE = 1.25
+const s = (n) => Math.round(n * SCALE)
+
 // ── Constantes ───────────────────────────────────────────
 const GROUP_PCT = {
   'GRUPO POROS':                 1.0,
@@ -21,7 +27,7 @@ const GROUP_COLORS = {
   'GRUPO POROS':                 { bg: '#dbeafe', text: '#1e40af', border: '#93c5fd', accent: '#3b82f6' },
   'GRUPO POROS / CORTE':         { bg: '#fefce8', text: '#854d0e', border: '#fde047', accent: '#eab308' },
   'GRUPO POROS / CORTE / COMIM': { bg: '#f3e8ff', text: '#6b21a8', border: '#d8b4fe', accent: '#a855f7' },
-  'GRUPO POROS / COMIM':         { bg: '#ffe4e6', text: '#881337', border: '#fca5a5', accent: '#e11d48' },
+  'GRUPO POROS / COMIM':         { bg: '#c9e6ec', text: '#0d2f3a', border: '#4a7f91' },
 }
 
 const BADGE_LABELS = {
@@ -50,7 +56,7 @@ function buildPatrimonioMap(patrimonio = []) {
   return map
 }
 
-const BADGE_W = 165
+const BADGE_W = s(165)
 const HDR = '#1e3a5f'
 
 // ── Helpers ──────────────────────────────────────────────
@@ -63,9 +69,9 @@ const fmtPct = (res, rec) => (!rec || res === null || res === undefined) ? null
 const resColor = (v) => (v === null || v === undefined) ? 'inherit'
   : v > 0 ? 'var(--positive)' : v < 0 ? 'var(--negative)' : 'inherit'
 
-const pctColors = (s) => {
-  if (!s) return { bg: '#f1f5f9', color: 'var(--text-dim)' }
-  const n = parseFloat(String(s).replace('%', '').replace(',', '.'))
+const pctColors = (str) => {
+  if (!str) return { bg: '#f1f5f9', color: 'var(--text-dim)' }
+  const n = parseFloat(String(str).replace('%', '').replace(',', '.'))
   if (isNaN(n))  return { bg: '#f1f5f9', color: 'var(--text-dim)' }
   if (n > 0) return { bg: 'var(--positive-bg)', color: 'var(--positive)' }
   if (n < 0) return { bg: 'var(--negative-bg)', color: 'var(--negative)' }
@@ -79,29 +85,22 @@ const calcRes = (rec, desp) => {
 
 const hasData = (eq) => (eq.rec ?? 0) !== 0 || (eq.desp ?? 0) !== 0
 
+// ── Larguras das colunas ──────────────────────────────────
+// Definidas cruas (pré-escala) num array só, pra <colgroup> e a largura
+// total da tabela sempre baterem — sem precisar somar números em dois
+// lugares diferentes.
+const RESUMO_COL_RAW = [220, 12, 90, 90, 90, 85, 12, 90, 90, 90, 85]
+const DETAIL_COL_RAW = [200, 60, 150, 90, 12, 90, 90, 90, 85, 12, 90, 90, 90, 85]
+
+const RESUMO_COLS = RESUMO_COL_RAW.map(s)
+const DETAIL_COLS = DETAIL_COL_RAW.map(s)
+
 // ── Colgroup ─────────────────────────────────────────────
 function TableColGroup({ isResumo }) {
-  if (isResumo) {
-    return (
-      <colgroup>
-        <col style={{ width: 220 }}/>
-        <col style={{ width: 12 }}/>
-        <col style={{ width: 90 }}/><col style={{ width: 90 }}/><col style={{ width: 90 }}/><col style={{ width: 68 }}/>
-        <col style={{ width: 12 }}/>
-        <col style={{ width: 90 }}/><col style={{ width: 90 }}/><col style={{ width: 90 }}/><col style={{ width: 68 }}/>
-      </colgroup>
-    )
-  }
+  const widths = isResumo ? RESUMO_COLS : DETAIL_COLS
   return (
     <colgroup>
-      <col style={{ width: BADGE_W + 24 }}/>
-      <col style={{ width: 60 }}/>
-      <col style={{ width: 150 }}/>
-      <col style={{ width: 90 }}/>
-      <col style={{ width: 12 }}/>
-      <col style={{ width: 90 }}/><col style={{ width: 90 }}/><col style={{ width: 90 }}/><col style={{ width: 68 }}/>
-      <col style={{ width: 12 }}/>
-      <col style={{ width: 90 }}/><col style={{ width: 90 }}/><col style={{ width: 90 }}/><col style={{ width: 68 }}/>
+      {widths.map((w, i) => <col key={i} style={{ width: w }}/>)}
     </colgroup>
   )
 }
@@ -110,21 +109,21 @@ function TableColGroup({ isResumo }) {
 const thBase = {
   background: HDR,
   color: 'rgba(255,255,255,.85)',
-  fontSize: 11, fontWeight: 600,
+  fontSize: s(11), fontWeight: 600,
   letterSpacing: '.08em', textTransform: 'uppercase',
-  padding: '7px 12px', textAlign: 'center', whiteSpace: 'nowrap',
+  padding: `${s(7)}px ${s(12)}px`, textAlign: 'center', whiteSpace: 'nowrap',
 }
 
 function TH({ children, span, rowSpan, bL, bR, bT, roundTL, roundTR }) {
   return (
     <th colSpan={span || 1} rowSpan={rowSpan || 1} style={{
       ...thBase,
-      borderTopLeftRadius:  roundTL ? 8 : 0,
-      borderTopRightRadius: roundTR ? 8 : 0,
+      borderTopLeftRadius:  roundTL ? s(8) : 0,
+      borderTopRightRadius: roundTR ? s(8) : 0,
       borderTop:    bT ? '1px solid var(--border)' : 'none',
-      borderLeft:   bL ? '1px solid var(--border)' : '1px solid rgba(255,255,255,.06)',
-      borderRight:  bR ? '1px solid var(--border)' : '1px solid rgba(255,255,255,.06)',
-      borderBottom: '1px solid rgba(255,255,255,.1)',
+      borderLeft:   bL ? '1px solid var(--border)' : 'none',
+      borderRight:  bR ? '1px solid var(--border)' : 'none',
+      borderBottom: 'none',
     }}>{children}</th>
   )
 }
@@ -134,14 +133,14 @@ function TH2({ children, bL, bR }) {
     <th style={{
       ...thBase,
       borderTop:    'none',
-      borderLeft:   bL ? '1px solid var(--border)' : '1px solid rgba(255,255,255,.06)',
-      borderRight:  bR ? '1px solid var(--border)' : '1px solid rgba(255,255,255,.06)',
-      borderBottom: '1px solid rgba(255,255,255,.08)',
+      borderLeft:   bL ? '1px solid var(--border)' : 'none',
+      borderRight:  bR ? '1px solid var(--border)' : 'none',
+      borderBottom: 'none',
     }}>{children}</th>
   )
 }
 
-const GAP_STYLE = { width: 12, padding: 0, background: 'transparent', border: 'none' }
+const GAP_STYLE = { width: s(12), padding: 0, background: 'transparent', border: 'none' }
 const GapTD = () => <td style={GAP_STYLE}/>
 const GapTH = () => <th style={{ ...GAP_STYLE, background: 'transparent' }}/>
 
@@ -151,8 +150,8 @@ function GroupBadge({ name }) {
   return (
     <div style={{
       background: c.bg, color: c.text, border: `1px solid ${c.border}`,
-      padding: '3px 0', width: BADGE_W, textAlign: 'center', margin: '0 auto',
-      borderRadius: 5, fontSize: 9.5, fontWeight: 700,
+      padding: `${s(3)}px 0`, width: BADGE_W, textAlign: 'center', margin: '0 auto',
+      borderRadius: s(5), fontSize: s(9.5), fontWeight: 700,
       letterSpacing: '.04em', whiteSpace: 'nowrap',
     }}>
       {BADGE_LABELS[name] || name}
@@ -161,13 +160,13 @@ function GroupBadge({ name }) {
 }
 
 function PctBadge({ value }) {
-  if (!value) return <span style={{ color: 'var(--text-dim)', fontSize: 11 }}>—</span>
+  if (!value) return <span style={{ color: 'var(--text-dim)', fontSize: s(11) }}>—</span>
   const c = pctColors(value)
   return (
     <span style={{
-      display: 'inline-block', minWidth: 58, textAlign: 'center',
-      padding: '2px 6px', borderRadius: 4,
-      fontSize: 10.5, fontWeight: 600,
+      display: 'inline-block', minWidth: s(58), textAlign: 'center',
+      padding: `${s(2)}px ${s(6)}px`, borderRadius: s(4),
+      fontSize: s(10.5), fontWeight: 600,
       background: c.bg, color: c.color,
     }}>{value}</span>
   )
@@ -175,10 +174,10 @@ function PctBadge({ value }) {
 
 // ── Linha de dados ───────────────────────────────────────
 const cellBase = {
-  padding: '6px 10px',
+  padding: `${s(6)}px ${s(10)}px`,
   borderBottom: '1px solid var(--border)',
   verticalAlign: 'middle',
-  fontSize: 12,
+  fontSize: s(12),
   transition: 'background .1s',
 }
 
@@ -210,9 +209,9 @@ function EquipRow({ item, isResumo, patrimonioMap = {} }) {
 
   const frotaBadge = vendido ? (
     <span style={{
-      display: 'inline-block', padding: '1px 6px', borderRadius: 4,
+      display: 'inline-block', padding: `${s(1)}px ${s(6)}px`, borderRadius: s(4),
       background: '#fef08a', color: '#854d0e', border: '1px solid #fde047',
-      fontSize: 10, fontWeight: 700, letterSpacing: '.04em',
+      fontSize: s(10), fontWeight: 700, letterSpacing: '.04em',
     }}>{item.code || '—'}</span>
   ) : (item.code || '—')
 
@@ -245,7 +244,7 @@ function EquipRow({ item, isResumo, patrimonioMap = {} }) {
 // ── Linha de espaço ──────────────────────────────────────
 function SpacerRow({ cols }) {
   return (
-    <tr><td colSpan={cols} style={{ padding: '6px 0', border: 'none', background: 'var(--bg)' }}/></tr>
+    <tr><td colSpan={cols} style={{ padding: `${s(6)}px 0`, border: 'none', background: 'var(--bg)' }}/></tr>
   )
 }
 
@@ -254,11 +253,11 @@ function DiversasHeader({ cols }) {
   return (
     <tr>
       <td colSpan={cols} style={{
-        padding: '6px 12px',
+        padding: `${s(6)}px ${s(12)}px`,
         background: HDR, color: 'rgba(255,255,255,.85)',
-        fontSize: 11, fontWeight: 600, letterSpacing: '.08em',
+        fontSize: s(11), fontWeight: 600, letterSpacing: '.08em',
         textTransform: 'uppercase', textAlign: 'center',
-        borderRadius: '8px 8px 0 0',
+        borderRadius: `${s(8)}px ${s(8)}px 0 0`,
       }}>
         Receitas / Despesas Diversas
       </td>
@@ -270,8 +269,8 @@ function DiversasHeader({ cols }) {
 function TotalRow({ gRec, gDesp, gRes, pRec, pDesp, pRes, labelCols, patTotal }) {
   const tc = (content, opts = {}) => (
     <td style={{
-      padding: '7px 10px', textAlign: 'center',
-      fontWeight: 700, fontSize: 12,
+      padding: `${s(7)}px ${s(10)}px`, textAlign: 'center',
+      fontWeight: 700, fontSize: s(12),
       color: opts.res ? resColor(opts.v) : 'var(--text)',
       borderTop: '1px solid var(--border)',
       borderBottom: '1px solid var(--border)',
@@ -279,29 +278,31 @@ function TotalRow({ gRec, gDesp, gRes, pRec, pDesp, pRes, labelCols, patTotal })
       fontVariantNumeric: 'tabular-nums',
       borderLeft:  opts.bL ? '1px solid var(--border)' : 'none',
       borderRight: opts.bR ? '1px solid var(--border)' : 'none',
-      borderBottomLeftRadius:  opts.rBL ? 8 : 0,
-      borderBottomRightRadius: opts.rBR ? 8 : 0,
+      borderBottomLeftRadius:  opts.rBL ? s(8) : 0,
+      borderBottomRightRadius: opts.rBR ? s(8) : 0,
     }}>{content}</td>
   )
+  const semPatTotal = patTotal === undefined
   return (
     <tr>
       <td colSpan={labelCols} style={{
-        padding: '7px 12px', fontWeight: 700, fontSize: 12,
+        padding: `${s(7)}px ${s(12)}px`, fontWeight: 700, fontSize: s(12),
         color: 'var(--text)', textAlign: 'center',
         background: 'var(--surface2)',
         borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)',
         borderLeft: '1px solid var(--border)',
-        borderRight: patTotal !== undefined ? 'none' : '1px solid var(--border)',
-        borderBottomLeftRadius: 8,
+        borderRight: 'none',
+        borderBottomLeftRadius: s(8),
+        borderBottomRightRadius: semPatTotal ? s(8) : 0,
       }}>Total Geral</td>
-      {patTotal !== undefined && tc(fmt(patTotal), { bR: true, rBR: true })}
+      {!semPatTotal && tc(fmt(patTotal), { bR: true, rBR: true })}
       <GapTD/>
       {tc(fmt(gRec),  { bL: true, rBL: true })}
       {tc(fmt(gDesp))}
       {tc(fmt(gRes),  { res: true, v: gRes })}
-      {tc(<PctBadge value={fmtPct(gRes, gRec)}/>, { bR: true })}
+      {tc(<PctBadge value={fmtPct(gRes, gRec)}/>, { bR: true, rBR: true })}
       <GapTD/>
-      {tc(fmt(pRec),  { bL: true })}
+      {tc(fmt(pRec),  { bL: true, rBL: true })}
       {tc(fmt(pDesp))}
       {tc(fmt(pRes),  { res: true, v: pRes })}
       {tc(<PctBadge value={fmtPct(pRes, pRec)}/>, { bR: true, rBR: true })}
@@ -313,50 +314,53 @@ function TotalRow({ gRec, gDesp, gRes, pRec, pDesp, pRes, labelCols, patTotal })
 function MainTable({ isResumo, children }) {
   const COLS       = isResumo ? 11 : 14
   const LABEL_COLS = isResumo ? 1  : 3
+  const tableWidth = (isResumo ? RESUMO_COLS : DETAIL_COLS).reduce((a, b) => a + b, 0)
 
   return (
-    <table style={{
-      width: '100%',
-      borderCollapse: 'separate',
-      borderSpacing: 0,
-      tableLayout: 'fixed',
-    }}>
-      <TableColGroup isResumo={isResumo}/>
-      <thead>
-        <tr>
-          <TH span={isResumo ? LABEL_COLS : LABEL_COLS + 1} rowSpan={isResumo ? 2 : 1} bT bL bR roundTL roundTR>
-            {isResumo ? 'Grupo' : 'Equipamento'}
-          </TH>
-          <GapTH/>
-          <TH span={4} bT bL bR roundTL roundTR>Geral</TH>
-          <GapTH/>
-          <TH span={4} bT bL bR roundTL roundTR>% Poros</TH>
-        </tr>
-        <tr>
-          {!isResumo && (
-            <>
-              <TH2 bL>Grupo</TH2>
-              <TH2>Frota</TH2>
-              <TH2>Descrição</TH2>
-              <TH2 bR>R$ Poros</TH2>
-            </>
-          )}
-          <GapTH/>
-          <TH2 bL>Receita</TH2>
-          <TH2>Despesa</TH2>
-          <TH2>Resultado</TH2>
-          <TH2 bR>%</TH2>
-          <GapTH/>
-          <TH2 bL>Receita</TH2>
-          <TH2>Despesa</TH2>
-          <TH2>Resultado</TH2>
-          <TH2 bR>%</TH2>
-        </tr>
-      </thead>
-      <tbody>
-        {typeof children === 'function' ? children({ COLS, LABEL_COLS }) : children}
-      </tbody>
-    </table>
+    <div style={{ width: tableWidth, margin: '0 auto' }}>
+      <table style={{
+        width: tableWidth,
+        borderCollapse: 'separate',
+        borderSpacing: 0,
+        tableLayout: 'fixed',
+      }}>
+        <TableColGroup isResumo={isResumo}/>
+        <thead>
+          <tr>
+            <TH span={isResumo ? LABEL_COLS : LABEL_COLS + 1} rowSpan={isResumo ? 2 : 1} bT bL bR roundTL roundTR>
+              {isResumo ? 'Grupo' : 'Equipamento'}
+            </TH>
+            <GapTH/>
+            <TH span={4} bT bL bR roundTL roundTR>Geral</TH>
+            <GapTH/>
+            <TH span={4} bT bL bR roundTL roundTR>% Poros</TH>
+          </tr>
+          <tr>
+            {!isResumo && (
+              <>
+                <TH2 bL>Grupo</TH2>
+                <TH2>Frota</TH2>
+                <TH2>Descrição</TH2>
+                <TH2 bR>R$ Poros</TH2>
+              </>
+            )}
+            <GapTH/>
+            <TH2 bL>Receita</TH2>
+            <TH2>Despesa</TH2>
+            <TH2>Resultado</TH2>
+            <TH2 bR>%</TH2>
+            <GapTH/>
+            <TH2 bL>Receita</TH2>
+            <TH2>Despesa</TH2>
+            <TH2>Resultado</TH2>
+            <TH2 bR>%</TH2>
+          </tr>
+        </thead>
+        <tbody>
+          {typeof children === 'function' ? children({ COLS, LABEL_COLS }) : children}
+        </tbody>
+      </table>
+    </div>
   )
 }
 
@@ -476,7 +480,7 @@ function GrupoDetalhe({ groupData, sortMode, selEquips, patrimonioMap }) {
   )
 }
 
-// ── Sidebar ──────────────────────────────────────────────
+// ── Sidebar (sem escala — é navegação, fica no tamanho normal) ──
 function Sidebar({ groups, active, onChange }) {
   const ordered = useMemo(
     () => GROUP_ORDER.map(n => groups.find(g => g.name === n)).filter(Boolean),
@@ -572,7 +576,7 @@ export default function Equipamentos({ groups, patrimonio = [], goTo, current, t
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>
 
-      {/* Topbar */}
+      {/* Topbar — sem escala, mesmo tamanho do resto do app */}
       <div style={{
         flexShrink: 0, padding: '14px 36px',
         borderBottom: '1px solid var(--border)', background: 'var(--surface)',
@@ -622,20 +626,22 @@ export default function Equipamentos({ groups, patrimonio = [], goTo, current, t
       </div>
 
       {/* Corpo */}
-      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+      <div style={{ flex: 1, minHeight: 0, display: 'flex', overflow: 'hidden' }}>
         <Sidebar groups={groups} active={active} onChange={setActive}/>
 
-        <div style={{ flex: 1, overflowY: 'auto', padding: '18px 36px' }}>
-          {isResumo ? (
-            <ResumoGeral groups={groups}/>
-          ) : groupData ? (
-            <GrupoDetalhe
-              groupData={groupData}
-              sortMode={sortMode}
-              selEquips={selEquips}
-              patrimonioMap={patrimonioMap}
-            />
-          ) : null}
+        <div style={{ flex: 1, minHeight: 0, padding: '18px 36px', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', overflowX: 'auto' }}>
+            {isResumo ? (
+              <ResumoGeral groups={groups}/>
+            ) : groupData ? (
+              <GrupoDetalhe
+                groupData={groupData}
+                sortMode={sortMode}
+                selEquips={selEquips}
+                patrimonioMap={patrimonioMap}
+              />
+            ) : null}
+          </div>
         </div>
       </div>
 

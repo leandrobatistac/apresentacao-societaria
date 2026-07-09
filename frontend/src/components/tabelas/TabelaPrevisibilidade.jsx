@@ -1,42 +1,37 @@
 import { useState } from 'react'
 import {
-  fmt, fmtPct, applyPoros, isObraZerada, groupSortKey,
+  fmt, fmtPct, applyPoros, isObraZerada, groupSortKey, s,
   GroupBadge, GAP, GapTD, GapTH, TH, makeTd, baseCell,
 } from './shared'
 
-const PGAP = { width: 10, padding: 0, background: 'transparent', border: 'none' }
+const PGAP = { width: s(10), padding: 0, background: 'transparent', border: 'none' }
 
 function PrevColGroup() {
   return (
     <colgroup>
-      <col style={{ width: 100 }} /> {/* Grupo */}
-      <col style={{ width: 40  }} /> {/* # */}
-      <col style={{ width: 150 }} /> {/* Nome */}
-      <col style={{ width: 10  }} /> {/* gap */}
-      <col style={{ width: 100 }} /> {/* Prev Rec */}
-      <col style={{ width: 100 }} /> {/* Prev Desp */}
-      <col style={{ width: 100 }} /> {/* Prev Res */}
-      <col style={{ width: 10  }} /> {/* gap */}
-      <col style={{ width: 100 }} /> {/* Adic Rec */}
-      <col style={{ width: 100 }} /> {/* Adic Desp */}
-      <col style={{ width: 100 }} /> {/* Adic Res */}
-      <col style={{ width: 10  }} /> {/* gap */}
-      <col style={{ width: 100 }} /> {/* Total Rec */}
-      <col style={{ width: 100 }} /> {/* Total Desp */}
-      <col style={{ width: 100 }} /> {/* Total Res */}
-      <col style={{ width: 70  }} /> {/* % Res */}
-      <col style={{ width: 10  }} /> {/* gap */}
-      <col style={{ width: 100 }} /> {/* Poros Rec */}
-      <col style={{ width: 100 }} /> {/* Poros Desp */}
-      <col style={{ width: 100 }} /> {/* Poros Res */}
-      <col style={{ width: 70  }} /> {/* % Res */}
-      <col style={{ width: 70  }} /> {/* % Unit */}
-      <col style={{ width: 70  }} /> {/* % Acum */}
+      <col style={{ width: s(100) }} /> {/* Grupo */}
+      <col style={{ width: s(40)  }} /> {/* # */}
+      <col style={{ width: s(150) }} /> {/* Nome */}
+      <col style={{ width: s(10)  }} /> {/* gap */}
+      <col style={{ width: s(100) }} /> {/* Prev Rec */}
+      <col style={{ width: s(100) }} /> {/* Prev Desp */}
+      <col style={{ width: s(100) }} /> {/* Prev Res */}
+      <col style={{ width: s(10)  }} /> {/* gap */}
+      <col style={{ width: s(100) }} /> {/* Adit Rec */}
+      <col style={{ width: s(100) }} /> {/* Adit Desp */}
+      <col style={{ width: s(100) }} /> {/* Adit Res */}
+      <col style={{ width: s(10)  }} /> {/* gap */}
+      <col style={{ width: s(100) }} /> {/* Total Rec */}
+      <col style={{ width: s(100) }} /> {/* Total Desp */}
+      <col style={{ width: s(100) }} /> {/* Total Res */}
+      <col style={{ width: s(70)  }} /> {/* Total % Res */}
+      <col style={{ width: s(70)  }} /> {/* % Unit */}
+      <col style={{ width: s(70)  }} /> {/* % Acum */}
     </colgroup>
   )
 }
 
-function PrevHead() {
+function PrevHead({ isPoros }) {
   return (
     <thead>
       <tr>
@@ -46,9 +41,7 @@ function PrevHead() {
         <td style={PGAP}/>
         <TH span={3} roundTL roundTR>Aditivos / Prateleira</TH>
         <td style={PGAP}/>
-        <TH span={4} roundTL roundTR>Total Geral</TH>
-        <td style={PGAP}/>
-        <TH span={6} roundTL roundTR>% Poros</TH>
+        <TH span={6} roundTL roundTR>{`Total ${isPoros ? '(% Poros)' : '(Geral)'}`}</TH>
       </tr>
       <tr>
         <TH>Grupo</TH><TH>#</TH><TH>Nome</TH>
@@ -56,8 +49,6 @@ function PrevHead() {
         <TH>Receita</TH><TH>Despesa</TH><TH>Resultado</TH>
         <td style={PGAP}/>
         <TH>Receita</TH><TH>Despesa</TH><TH>Resultado</TH>
-        <td style={PGAP}/>
-        <TH>Receita</TH><TH>Despesa</TH><TH>Resultado</TH><TH>% Res</TH>
         <td style={PGAP}/>
         <TH>Receita</TH><TH>Despesa</TH><TH>Resultado</TH><TH>% Res</TH>
         <TH>% Unit.</TH><TH>% Acum.</TH>
@@ -77,8 +68,7 @@ const abcCell = (hov) => ({
 function PrevRow({ o,
   pRec, pDesp, pRes,
   aRec, aDesp, aRes,
-  tRec, tDesp, tRes, tMargin,
-  porosRec, porosDesp, porosRes, porosMargin,
+  dispRec, dispDesp, dispRes, dispMargin,
   abcPct, abcCum,
 }) {
   const [hov, setHov] = useState(false)
@@ -90,33 +80,29 @@ function PrevRow({ o,
       {td(o.num,  { bold: true })}
       {td(o.nome, { bold: true, nowrap: true, maxWidth: 150, alignLeft: true })}
       <td style={PGAP}/>
-      {td(fmt(pRec),          { num: true, bL: true })}
-      {td(fmt(pDesp),         { num: true })}
-      {td(fmt(pRes),          { num: true, bR: true })}
+      {td(fmt(pRec),  { num: true, bL: true })}
+      {td(fmt(pDesp), { num: true })}
+      {td(fmt(pRes),  { num: true, bR: true })}
       <td style={PGAP}/>
-      {td(fmt(aRec),          { num: true, bL: true })}
-      {td(fmt(aDesp),         { num: true })}
-      {td(fmt(aRes),          { num: true, bR: true })}
+      {td(fmt(aRec),  { num: true, bL: true })}
+      {td(fmt(aDesp), { num: true })}
+      {td(fmt(aRes),  { num: true, bR: true })}
       <td style={PGAP}/>
-      {td(fmt(tRec),          { num: true, bL: true })}
-      {td(fmt(tDesp),         { num: true })}
-      {td(fmt(tRes),          { num: true })}
-      {td(fmtPct(tMargin),    { num: true, bR: true })}
-      <td style={PGAP}/>
-      {td(fmt(porosRec),      { num: true, bL: true })}
-      {td(fmt(porosDesp),     { num: true })}
-      {td(fmt(porosRes),      { num: true })}
-      {td(fmtPct(porosMargin),{ num: true })}
+      {td(fmt(dispRec),       { num: true, bL: true })}
+      {td(fmt(dispDesp),      { num: true })}
+      {td(fmt(dispRes),       { num: true })}
+      {td(fmtPct(dispMargin), { num: true, bR: true })}
       <td style={abcCell(hov)}>{fmtPct(abcPct)}</td>
       <td style={abcCell(hov)}>{fmtPct(abcCum)}</td>
     </tr>
   )
 }
 
-export function TabelaPrevisibilidade({ obras, obrasAll, sortMode = 'grupo' }) {
+export function TabelaPrevisibilidade({ obras, obrasAll, sortMode = 'abc', metric = 'poros' }) {
+  const isPoros = metric === 'poros'
   const obrasAllAtivas = (obrasAll || obras).filter(o => !isObraZerada(o))
 
-  // ── Totais fixos ──
+  // ── Totais fixos (sempre calculamos os dois lados; escolhemos qual mostrar depois) ──
   let ttPRec=0, ttPDesp=0, ttPRes=0
   let ttARec=0, ttADesp=0, ttARes=0
   let ttTRec=0, ttTDesp=0, ttTRes=0
@@ -136,6 +122,12 @@ export function TabelaPrevisibilidade({ obras, obrasAll, sortMode = 'grupo' }) {
     if (ps !== null) ttPorosRes  += ps
   })
 
+  // Total exibido no painel "Total", conforme o filtro de métrica
+  const ttDispRec  = isPoros ? ttPorosRec  : ttTRec
+  const ttDispDesp = isPoros ? ttPorosDesp : ttTDesp
+  const ttDispRes  = isPoros ? ttPorosRes  : ttTRes
+  const ttDispMargin = ttDispRec ? ttDispRes / ttDispRec : null
+
   // ── Linhas visíveis ──
   const rowsData = obras.filter(o => !isObraZerada(o)).reduce((acc, o) => {
     const pRec = o.p_rec  || 0; const pDesp = o.p_desp || 0; const pRes = o.p_res  || 0
@@ -145,59 +137,73 @@ export function TabelaPrevisibilidade({ obras, obrasAll, sortMode = 'grupo' }) {
     const porosRec  = applyPoros(tRec,  o)
     const porosDesp = applyPoros(tDesp, o)
     const porosRes  = applyPoros(tRes,  o)
+
+    // Valores do painel "Total", conforme o filtro de métrica
+    const dispRec    = isPoros ? porosRec    : tRec
+    const dispDesp   = isPoros ? porosDesp   : tDesp
+    const dispRes    = isPoros ? porosRes    : tRes
+    const dispMargin = dispRec ? dispRes / dispRec : null
+
     acc.push({
       o,
       pRec, pDesp, pRes,
       aRec, aDesp, aRes,
-      tRec, tDesp, tRes, tMargin: tRec ? tRes/tRec : null,
-      porosRec, porosDesp, porosRes, porosMargin: porosRec ? porosRes/porosRec : null,
+      dispRec, dispDesp, dispRes, dispMargin,
     })
     return acc
   }, [])
 
-  if (sortMode === 'abc-geral')      rowsData.sort((a, b) => (b.tRes    || 0) - (a.tRes    || 0))
-  else if (sortMode === 'abc-poros') rowsData.sort((a, b) => (b.porosRes || 0) - (a.porosRes || 0))
-  else                               rowsData.sort((a, b) => groupSortKey(a.o.consorcio) - groupSortKey(b.o.consorcio))
+  if (sortMode === 'abc') rowsData.sort((a, b) => (b.dispRes || 0) - (a.dispRes || 0))
+  else                    rowsData.sort((a, b) => groupSortKey(a.o.consorcio) - groupSortKey(b.o.consorcio))
 
   let cumSum = 0
   const rowsWithAbc = rowsData.map(row => {
-    const abcPct = ttPorosRes ? (row.porosRes / ttPorosRes) : null
+    const abcPct = ttDispRes ? (row.dispRes / ttDispRes) : null
     cumSum += abcPct || 0
     return { ...row, abcPct, abcCum: cumSum }
   })
 
-  const totCell = (v, isPct, extra = {}) => (
-    <td style={{
-      padding: '7px 12px', fontWeight: 700, fontSize: 11,
-      color: 'rgba(255,255,255,.9)', textAlign: 'center', background: '#1e3a5f',
-      fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap', ...extra,
-    }}>
-      {isPct ? fmtPct(v) : fmt(v)}
-    </td>
-  )
+  const totCell = (v, isPct, extra = {}) => {
+    const { borderBottomLeftRadius = 0, borderBottomRightRadius = 0 } = extra
+    return (
+      <td style={{ padding: 0, border: 'none' }}>
+        <div style={{
+          padding: `${s(7)}px ${s(12)}px`, fontWeight: 700, fontSize: s(11),
+          color: 'rgba(255,255,255,.9)', textAlign: 'center', background: '#1e3a5f',
+          fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap',
+          borderBottomLeftRadius, borderBottomRightRadius,
+        }}>
+          {isPct ? fmtPct(v) : fmt(v)}
+        </div>
+      </td>
+    )
+  }
 
   return (
-    <div style={{ border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden', width: 'fit-content', margin: '0 auto' }}>
+    <div style={{ width: 'fit-content', margin: '0 auto' }}>
       <table style={{ borderCollapse: 'separate', borderSpacing: 0, tableLayout: 'fixed' }}>
         <PrevColGroup />
-        <PrevHead />
+        <PrevHead isPoros={isPoros} />
         <tbody>
           {rowsWithAbc.map(row => <PrevRow key={row.o.num} {...row} />)}
-          <tr><td colSpan={23} style={{ height: 6, padding: 0, background: 'transparent', border: 'none' }} /></tr>
+          <tr><td colSpan={18} style={{ height: s(6), padding: 0, background: 'transparent', border: 'none' }} /></tr>
           <tr>
-            <td colSpan={3} style={{ padding:'7px 14px', fontWeight:700, fontSize:11, color:'rgba(255,255,255,.9)', textAlign:'center', background:'#1e3a5f', borderBottomLeftRadius:8 }}>Total Geral</td>
+            <td colSpan={3} style={{ padding: 0, border: 'none' }}>
+              <div style={{ padding:`${s(7)}px ${s(14)}px`, fontWeight:700, fontSize:s(11), color:'rgba(255,255,255,.9)', textAlign:'center', background:'#1e3a5f', borderBottomLeftRadius:s(8), borderBottomRightRadius:s(8) }}>Total Geral</div>
+            </td>
             <td style={PGAP}/>
-            {totCell(ttPRec,  false, { bL: true })}{totCell(ttPDesp, false)}{totCell(ttPRes,  false, { bR: true })}
+            {totCell(ttPRec,  false, { borderBottomLeftRadius: s(8) })}{totCell(ttPDesp, false)}{totCell(ttPRes,  false, { borderBottomRightRadius: s(8) })}
             <td style={PGAP}/>
-            {totCell(ttARec,  false, { bL: true })}{totCell(ttADesp, false)}{totCell(ttARes,  false, { bR: true })}
+            {totCell(ttARec,  false, { borderBottomLeftRadius: s(8) })}{totCell(ttADesp, false)}{totCell(ttARes,  false, { borderBottomRightRadius: s(8) })}
             <td style={PGAP}/>
-            {totCell(ttTRec,  false, { bL: true })}{totCell(ttTDesp, false)}{totCell(ttTRes,  false)}
-            {totCell(ttTRec ? ttTRes/ttTRec : null, true)}
-            <td style={PGAP}/>
-            {totCell(ttPorosRec, false, { bL: true })}{totCell(ttPorosDesp, false)}{totCell(ttPorosRes, false)}
-            {totCell(ttPorosRec ? ttPorosRes/ttPorosRec : null, true)}
-            <td style={{ padding:'7px 12px', textAlign:'center', fontWeight:700, fontSize:11, background:'#1e3a5f', color:'rgba(255,255,255,.9)' }}>100%</td>
-            <td style={{ padding:'7px 12px', textAlign:'center', fontWeight:700, fontSize:11, background:'#1e3a5f', color:'rgba(255,255,255,.9)', borderBottomRightRadius:8 }}>100%</td>
+            {totCell(ttDispRec,  false, { borderBottomLeftRadius: s(8) })}{totCell(ttDispDesp, false)}{totCell(ttDispRes,  false)}
+            {totCell(ttDispMargin, true)}
+            <td style={{ padding: 0, border: 'none' }}>
+              <div style={{ padding:`${s(7)}px ${s(12)}px`, textAlign:'center', fontWeight:700, fontSize:s(11), background:'#1e3a5f', color:'rgba(255,255,255,.9)' }}>100%</div>
+            </td>
+            <td style={{ padding: 0, border: 'none' }}>
+              <div style={{ padding:`${s(7)}px ${s(12)}px`, textAlign:'center', fontWeight:700, fontSize:s(11), background:'#1e3a5f', color:'rgba(255,255,255,.9)', borderBottomRightRadius:s(8) }}>100%</div>
+            </td>
           </tr>
         </tbody>
       </table>

@@ -1,9 +1,3 @@
-// Evolução mensal do "Total Geral" exibido no rodapé da Timeline de Obras.
-// Cada mês tem dois valores: `geral` (filtro Geral) e `poros` (filtro % Poros).
-// Atualize os dois valores do mês corrente aqui todo mês. Use `null` em
-// qualquer um dos dois para meses ainda não fechados (vai aparecer como
-// "—" no quadro).
-
 export const EVOLUCAO_TOTAL_GERAL = {
   jan: { geral: null, poros: null },
   fev: { geral: null, poros: null },
@@ -17,4 +11,65 @@ export const EVOLUCAO_TOTAL_GERAL = {
   out: { geral: null, poros: null },
   nov: { geral: null, poros: null },
   dez: { geral: null, poros: null },
+}
+
+export const EVOLUCAO_POR_OBRA = {
+  jan: {},
+  fev: {},
+  mar: {},
+  abr: {
+    204: { nome: 'COPASA RMBH',              geral: -36191.43,   poros: -36191.43  },
+    210: { nome: 'COPASA ISIDORA',           geral: 1911643.00,  poros: 1911643.00 },
+    259: { nome: 'DNIT',                     geral: 0,           poros: 0          },
+    254: { nome: 'LUZIÂNIA',                 geral: 7261640.18,  poros: 2418126.18 },
+    255: { nome: 'ANÁPOLIS - CAPIVARI',      geral: 9613584.96,  poros: 3201323.79 },
+    256: { nome: 'NOVO GAMA',                geral: 1687673.70,  poros: 561995.34  },
+    257: { nome: 'CIDADE OCIDENTAL',         geral: 1458859.54,  poros: 485800.23  },
+    172: { nome: 'INOVA PARQUE II',          geral: 143016.78,   poros: 71508.39   },
+    192: { nome: 'BACIÃO DER',               geral: 1495747.27,  poros: 747873.63  },
+    235: { nome: 'AFONSO PENA',              geral: 130639.83,   poros: 65319.92   },
+    236: { nome: 'RUA ZÍNIA',                geral: 98618.12,    poros: 49309.06   },
+    241: { nome: 'AV. YECOABA',              geral: -88602.22,   poros: -44301.11  },
+    242: { nome: 'CANALIZAÇÃO IGARAPÉ',      geral: -631724.65,  poros: -315862.33 },
+    244: { nome: 'PONTE R. BETIM - POÇÕES I',geral: 1932861.19,  poros: 966430.60  },
+    248: { nome: 'VIADUTO BH SHOPPING',      geral: -384921.36,  poros: -192460.68 },
+    258: { nome: 'ADUTORA NEGREIROS',        geral: 3554338.59,  poros: 1332876.97 },
+    191: { nome: 'NOVA MARACANÃ',            geral: -802379.26,  poros: -180535.33 },
+    198: { nome: 'CORREGO FERRUGEM',         geral: -568585.94,  poros: -170575.78 },
+    226: { nome: 'RIBEIRÃO PAMPULHA',        geral: -727792.50,  poros: -218337.75 },
+    253: { nome: 'PARQUE LINEAR',            geral: 5301704.07,  poros: 1765467.45 },
+    225: { nome: 'COPASA MILIONÁRIOS',       geral: 1135254.08,  poros: 794677.85  },
+    243: { nome: 'ANÁPOLIS - CODEGO',        geral: 6733191.95,  poros: 1346638.39 },
+  },
+  mai: {
+    204: { nome: 'COPASA RMBH',              geral: -81867.42,   poros: -81867.42  },
+    210: { nome: 'COPASA ISIDORA',           geral: 922239.36,   poros: 922239.36  },
+    259: { nome: 'DNIT',                     geral: 0,           poros: 0          },
+    254: { nome: 'LUZIÂNIA',                 geral: 6652884.46,  poros: 2215410.52 },
+    255: { nome: 'ANÁPOLIS - CAPIVARI',      geral: 9206025.86,  poros: 3065606.61 },
+    256: { nome: 'NOVO GAMA',                geral: 1347729.03,  poros: 448793.77  },
+    257: { nome: 'CIDADE OCIDENTAL',         geral: 695883.07,   poros: 231729.06  },
+    172: { nome: 'INOVA PARQUE II',          geral: 459345.31,   poros: 229672.65  },
+    192: { nome: 'BACIÃO DER',               geral: 1222116.51,  poros: 611058.25  },
+    235: { nome: 'AFONSO PENA',              geral: -193101.68,  poros: -96550.84  },
+    236: { nome: 'RUA ZÍNIA',                geral: 96194.11,    poros: 48097.06   },
+    241: { nome: 'AV. YECOABA',              geral: -94144.26,   poros: -47072.13  },
+    242: { nome: 'CANALIZAÇÃO IGARAPÉ',      geral: -631724.65,  poros: -315862.33 },
+    244: { nome: 'PONTE R. BETIM - POÇÕES I',geral: 1884311.33,  poros: 942155.66  },
+    248: { nome: 'VIADUTO BH SHOPPING',      geral: -910269.52,  poros: -455134.76 },
+    258: { nome: 'ADUTORA NEGREIROS',        geral: 3418692.56,  poros: 1282009.71 },
+    191: { nome: 'NOVA MARACANÃ',            geral: -758977.36,  poros: -170769.91 },
+    198: { nome: 'CORREGO FERRUGEM',         geral: -391609.58,  poros: -117482.87 },
+    226: { nome: 'RIBEIRÃO PAMPULHA',        geral: -727792.50,  poros: -218337.75 },
+    253: { nome: 'PARQUE LINEAR',            geral: 9564917.98,  poros: 3185117.69 },
+    225: { nome: 'COPASA MILIONÁRIOS',       geral: 901926.46,   poros: 631348.53  },
+    243: { nome: 'ANÁPOLIS - CODEGO',        geral: 6267064.65,  poros: 1253412.93 },
+  },
+  jun: {},
+  jul: {},
+  ago: {},
+  set: {},
+  out: {},
+  nov: {},
+  dez: {},
 }

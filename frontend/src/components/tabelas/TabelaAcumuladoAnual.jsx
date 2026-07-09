@@ -1,33 +1,33 @@
 import { useState } from 'react'
 import { PERIODO } from '../../config/periodo'
 import {
-  fmt, fmtPct, applyPoros, isObraZerada, groupSortKey, gc,
+  fmt, fmtPct, applyPoros, isObraZerada, groupSortKey, gc, s,
   GroupBadge, GAP, GapTD, GapTH, TH, makeTd, buildGroupEntries,
 } from './shared'
 
 function AcumAnualColGroup() {
   return (
     <colgroup>
-      <col style={{ width: 100 }} />
-      <col style={{ width: 40  }} />
-      <col style={{ width: 126 }} />
-      <col style={{ width: 10  }} />
-      <col style={{ width: 110 }} />
-      <col style={{ width: 110 }} />
-      <col style={{ width: 110 }} />
-      <col style={{ width: 76  }} />
-      <col style={{ width: 10  }} />
-      <col style={{ width: 110 }} />
-      <col style={{ width: 110 }} />
-      <col style={{ width: 110 }} />
-      <col style={{ width: 76  }} />
+      <col style={{ width: s(100) }} />
+      <col style={{ width: s(40)  }} />
+      <col style={{ width: s(126) }} />
+      <col style={{ width: s(10)  }} />
+      <col style={{ width: s(110) }} />
+      <col style={{ width: s(110) }} />
+      <col style={{ width: s(110) }} />
+      <col style={{ width: s(76)  }} />
+      <col style={{ width: s(10)  }} />
+      <col style={{ width: s(110) }} />
+      <col style={{ width: s(110) }} />
+      <col style={{ width: s(110) }} />
+      <col style={{ width: s(76)  }} />
     </colgroup>
   )
 }
 
 function AcumAnualHead() {
   return (
-    <thead>
+    <thead style={{ position: 'sticky', top: 0, zIndex: 10 }}>
       <tr>
         <TH span={3} roundTL roundTR>Obra</TH>
         <GapTH/>
@@ -71,8 +71,8 @@ function AcumAnualRow({ o, aRec, aDesp, aRes, aMargin, hRec, hDesp, hRes, hMargi
 
 function AcumAnualSubTotalRow({ group, aRec, aDesp, aRes, aMargin, hRec, hDesp, hRes, hMargin }) {
   const c = gc(group)
-  const s = (extra = {}) => ({
-    padding: '5px 12px', textAlign: 'center', fontWeight: 700, fontSize: 11,
+  const st = (extra = {}) => ({
+    padding: `${s(5)}px ${s(12)}px`, textAlign: 'center', fontWeight: 700, fontSize: s(11),
     background: c.bg, color: c.text,
     borderBottom: '1px solid var(--border)',
     fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap',
@@ -80,24 +80,24 @@ function AcumAnualSubTotalRow({ group, aRec, aDesp, aRes, aMargin, hRec, hDesp, 
   })
   return (
     <tr>
-      <td colSpan={3} style={s({ borderLeft: '1px solid var(--border)', borderRight: '1px solid var(--border)' })}>Total {group}</td>
+      <td colSpan={3} style={st({ borderLeft: '1px solid var(--border)', borderRight: '1px solid var(--border)' })}>Total {group}</td>
       <td style={GAP}/>
-      <td style={s({ borderLeft: '1px solid var(--border)' })}>{fmt(aRec)}</td>
-      <td style={s()}>{fmt(aDesp)}</td>
-      <td style={s()}>{fmt(aRes)}</td>
-      <td style={s({ borderRight: '1px solid var(--border)' })}>{fmtPct(aMargin)}</td>
+      <td style={st({ borderLeft: '1px solid var(--border)' })}>{fmt(aRec)}</td>
+      <td style={st()}>{fmt(aDesp)}</td>
+      <td style={st()}>{fmt(aRes)}</td>
+      <td style={st({ borderRight: '1px solid var(--border)' })}>{fmtPct(aMargin)}</td>
       <td style={GAP}/>
-      <td style={s({ borderLeft: '1px solid var(--border)' })}>{fmt(hRec)}</td>
-      <td style={s()}>{fmt(hDesp)}</td>
-      <td style={s()}>{fmt(hRes)}</td>
-      <td style={s({ borderRight: '1px solid var(--border)' })}>{fmtPct(hMargin)}</td>
+      <td style={st({ borderLeft: '1px solid var(--border)' })}>{fmt(hRec)}</td>
+      <td style={st()}>{fmt(hDesp)}</td>
+      <td style={st()}>{fmt(hRes)}</td>
+      <td style={st({ borderRight: '1px solid var(--border)' })}>{fmtPct(hMargin)}</td>
     </tr>
   )
 }
 
 function AcumAnualTotRow({ aRec, aDesp, aRes, aMargin, hRec, hDesp, hRes, hMargin }) {
   const base = {
-    padding: '7px 12px', textAlign: 'center', fontWeight: 700, fontSize: 11,
+    padding: `${s(7)}px ${s(12)}px`, textAlign: 'center', fontWeight: 700, fontSize: s(11),
     color: 'rgba(255,255,255,.9)', background: '#1e3a5f',
     fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap',
   }
@@ -106,17 +106,17 @@ function AcumAnualTotRow({ aRec, aDesp, aRes, aMargin, hRec, hDesp, hRes, hMargi
   )
   return (
     <tr>
-      <td colSpan={3} style={{ ...base, borderBottomLeftRadius: 8, borderBottomRightRadius: 8 }}>Total Geral</td>
+      <td colSpan={3} style={{ ...base, borderBottomLeftRadius: s(8), borderBottomRightRadius: s(8) }}>Total Geral</td>
       <td style={GAP}/>
-      {cell(aRec,    false, { borderBottomLeftRadius: 8 })}
+      {cell(aRec,    false, { borderBottomLeftRadius: s(8) })}
       {cell(aDesp,   false)}
       {cell(aRes,    false)}
-      {cell(aMargin, true,  { borderBottomRightRadius: 8 })}
+      {cell(aMargin, true,  { borderBottomRightRadius: s(8) })}
       <td style={GAP}/>
-      {cell(hRec,    false, { borderBottomLeftRadius: 8 })}
+      {cell(hRec,    false, { borderBottomLeftRadius: s(8) })}
       {cell(hDesp,   false)}
       {cell(hRes,    false)}
-      {cell(hMargin, true,  { borderBottomRightRadius: 8 })}
+      {cell(hMargin, true,  { borderBottomRightRadius: s(8) })}
     </tr>
   )
 }
@@ -169,13 +169,13 @@ export function TabelaAcumuladoAnual({ obras, obrasAll, metric }) {
   })
 
   return (
-    <div style={{ width: 'fit-content', margin: '0 auto' }}>
+    <div className="scroll-sem-barra" style={{ width: 'fit-content', margin: '0 auto', flex: 1, minHeight: 0, overflowY: 'auto' }}>
       <table style={{ borderCollapse: 'separate', borderSpacing: 0, tableLayout: 'fixed' }}>
         <AcumAnualColGroup />
         <AcumAnualHead />
         <tbody>
           {rows}
-          <tr><td colSpan={13} style={{ height: 6, padding: 0, background: 'transparent', border: 'none' }} /></tr>
+          <tr><td colSpan={13} style={{ height: s(6), padding: 0, background: 'transparent', border: 'none' }} /></tr>
           <AcumAnualTotRow
             aRec={tARec} aDesp={tADesp} aRes={tARes} aMargin={tARec ? tARes/tARec : null}
             hRec={tHRec} hDesp={tHDesp} hRes={tHRes} hMargin={tHRec ? tHRes/tHRec : null}

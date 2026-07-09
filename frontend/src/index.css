@@ -1,5 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
+.scroll-sem-barra {
+  scrollbar-width: none;      /* Firefox */
+  -ms-overflow-style: none;   /* IE/Edge legado */
+}
+
+.scroll-sem-barra::-webkit-scrollbar {
+  display: none;              /* Chrome, Safari, Edge novo */
+}
+
 :root {
   --bg:           #f0f4f8;
   --surface:      #ffffff;

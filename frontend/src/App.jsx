@@ -18,8 +18,9 @@ import CapaPrevisibilidade2027 from './slides/capas/CapaPrevisibilidade2027'
 import Previsibilidade2027     from './slides/conteudo/Previsibilidade2027'
 import CapaTimeline  from './slides/capas/CapaTimeline'
 import TimelineObras from './slides/conteudo/TimelineObras'
+import ComparativoMensalObras from './slides/conteudo/ComparativoMensalObras'
 
-const TOTAL = 13
+const TOTAL = 14
 
 const variants = {
   enter:  (d) => ({ opacity: 0, x: d > 0 ? 50 : -50 }),
@@ -105,8 +106,9 @@ export default function App() {
           {current === 8  && <Previsibilidade2027       obras={obras}                           {...nav} />}
           {current === 9  && <CapaTimeline                                                      {...nav} />}
           {current === 10 && <TimelineObras             obras={obras}                           {...nav} />}
-          {current === 11 && <CapaEquipamentos                                                  {...nav} />}
-          {current === 12 && <Equipamentos              groups={groups} patrimonio={patrimonio}  {...nav} />}
+          {current === 11 && <ComparativoMensalObras             obras={obras}                           {...nav} />}
+          {current === 12 && <CapaEquipamentos                                                  {...nav} />}
+          {current === 13 && <Equipamentos              groups={groups} patrimonio={patrimonio}  {...nav} />}
         </motion.div>
       </AnimatePresence>
     </div>

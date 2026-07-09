@@ -87,7 +87,7 @@ export default function AcumuladoAnualHistorico({ obras, goTo, current, total })
         </div>
       </div>
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '18px 36px' }}>
+      <div style={{ flex: 1, minHeight: 0, padding: '18px 36px', display: 'flex', flexDirection: 'column' }}>
         {filtered.length === 0
           ? <div style={{ textAlign: 'center', padding: 48, color: 'var(--text-dim)', fontSize: 13 }}>
               Nenhuma obra selecionada

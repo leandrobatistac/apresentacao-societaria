@@ -1,20 +1,20 @@
 import { useState } from 'react'
 import {
-  fmt, fmtPct, applyPoros, groupSortKey,
+  fmt, fmtPct, applyPoros, groupSortKey, s,
   GroupBadge, GAP, GapTD, GapTH, TH, makeTd,
 } from './shared'
 
-const PGAP = { width: 10, padding: 0, background: 'transparent', border: 'none' }
+const PGAP = { width: s(10), padding: 0, background: 'transparent', border: 'none' }
 
 function Prev2027ColGroup() {
   return (
     <colgroup>
-      <col style={{ width: 100 }} />
-      <col style={{ width: 40  }} />
-      <col style={{ width: 150 }} />
-      <col style={{ width: 10  }} />
-      <col style={{ width: 130 }} />
-      <col style={{ width: 130 }} />
+      <col style={{ width: s(100) }} />
+      <col style={{ width: s(40)  }} />
+      <col style={{ width: s(150) }} />
+      <col style={{ width: s(10)  }} />
+      <col style={{ width: s(145) }} /> {/* Backlog Geral — um pouco mais larga que o padrão */}
+      <col style={{ width: s(145) }} /> {/* Backlog % Poros — idem */}
     </colgroup>
   )
 }
@@ -73,29 +73,37 @@ export function TabelaPrevisibilidade2027({ obras, obrasAll }) {
 
   rowsData.sort((a, b) => groupSortKey(a.o.consorcio) - groupSortKey(b.o.consorcio))
 
-  const totCell = (v, extra = {}) => (
-    <td style={{
-      padding: '7px 12px', fontWeight: 700, fontSize: 11,
-      color: 'rgba(255,255,255,.9)', textAlign: 'center', background: '#1e3a5f',
-      fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap', ...extra,
-    }}>
-      {fmt(v)}
-    </td>
-  )
+  const totCell = (v, extra = {}) => {
+    const { borderBottomLeftRadius = 0, borderBottomRightRadius = 0 } = extra
+    return (
+      <td style={{ padding: 0, border: 'none' }}>
+        <div style={{
+          padding: `${s(7)}px ${s(12)}px`, fontWeight: 700, fontSize: s(11),
+          color: 'rgba(255,255,255,.9)', textAlign: 'center', background: '#1e3a5f',
+          fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap',
+          borderBottomLeftRadius, borderBottomRightRadius,
+        }}>
+          {fmt(v)}
+        </div>
+      </td>
+    )
+  }
 
   return (
-    <div style={{ border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden', width: 'fit-content', margin: '0 auto' }}>
+    <div style={{ width: 'fit-content', margin: '0 auto' }}>
       <table style={{ borderCollapse: 'separate', borderSpacing: 0, tableLayout: 'fixed' }}>
         <Prev2027ColGroup />
         <Prev2027Head />
         <tbody>
           {rowsData.map(row => <Prev2027Row key={row.o.num} {...row} />)}
-          <tr><td colSpan={6} style={{ height: 6, padding: 0, background: 'transparent', border: 'none' }} /></tr>
+          <tr><td colSpan={6} style={{ height: s(6), padding: 0, background: 'transparent', border: 'none' }} /></tr>
           <tr>
-            <td colSpan={3} style={{ padding:'7px 14px', fontWeight:700, fontSize:11, color:'rgba(255,255,255,.9)', textAlign:'center', background:'#1e3a5f', borderBottomLeftRadius:8 }}>Total Geral</td>
+            <td colSpan={3} style={{ padding: 0, border: 'none' }}>
+              <div style={{ padding:`${s(7)}px ${s(14)}px`, fontWeight:700, fontSize:s(11), color:'rgba(255,255,255,.9)', textAlign:'center', background:'#1e3a5f', borderBottomLeftRadius:s(8), borderBottomRightRadius:s(8) }}>Total Geral</div>
+            </td>
             <td style={PGAP}/>
-            {totCell(ttRec,      { bL: true })}
-            {totCell(ttPorosRec, { bR: true, borderBottomRightRadius: 8 })}
+            {totCell(ttRec,      { borderBottomLeftRadius: s(8) })}
+            {totCell(ttPorosRec, { borderBottomRightRadius: s(8) })}
           </tr>
         </tbody>
       </table>
