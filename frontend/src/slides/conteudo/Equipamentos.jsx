@@ -83,7 +83,14 @@ const calcRes = (rec, desp) => {
   return (rec ?? 0) - (desp ?? 0)
 }
 
+// Tem Receita ou Despesa != 0
 const hasData = (eq) => (eq.rec ?? 0) !== 0 || (eq.desp ?? 0) !== 0
+
+// Tem valor de Patrimônio (Mercado ou Poros) != 0
+const hasPatrimonio = (code, patrimonioMap = {}) => {
+  const pat = patrimonioMap[code]
+  return !!pat && ((pat.valorMercado ?? 0) !== 0 || (pat.valorPoros ?? 0) !== 0)
+}
 
 // ── Larguras das colunas ──────────────────────────────────
 // Definidas cruas (pré-escala) num array só, pra <colgroup> e a largura
@@ -421,7 +428,8 @@ function GrupoDetalhe({ groupData, sortMode, selEquips, patrimonioMap }) {
 
   const filteredEquip = useMemo(() => {
     const f = equipItems.filter(i =>
-      selEquips.has(`${i.group}::${i.code || i.nome}`) && hasData(i)
+      selEquips.has(`${i.group}::${i.code || i.nome}`) &&
+      (hasData(i) || hasPatrimonio(i.code, patrimonioMap))
     )
     if (sortMode === 'abc-geral')
       return [...f].sort((a, b) => (calcRes(b.rec, b.desp) ?? 0) - (calcRes(a.rec, a.desp) ?? 0))
@@ -430,7 +438,7 @@ function GrupoDetalhe({ groupData, sortMode, selEquips, patrimonioMap }) {
         ((calcRes(b.rec, b.desp) ?? 0) * pct) - ((calcRes(a.rec, a.desp) ?? 0) * pct)
       )
     return f
-  }, [equipItems, selEquips, sortMode, pct])
+  }, [equipItems, selEquips, sortMode, pct, patrimonioMap])
 
   const totals = useMemo(() => {
     let tGRec = 0, tGDesp = 0, tPatPoros = 0
@@ -481,7 +489,7 @@ function GrupoDetalhe({ groupData, sortMode, selEquips, patrimonioMap }) {
 }
 
 // ── Sidebar (sem escala — é navegação, fica no tamanho normal) ──
-function Sidebar({ groups, active, onChange }) {
+function Sidebar({ groups, active, onChange, patrimonioMap = {} }) {
   const ordered = useMemo(
     () => GROUP_ORDER.map(n => groups.find(g => g.name === n)).filter(Boolean),
     [groups]
@@ -512,7 +520,9 @@ function Sidebar({ groups, active, onChange }) {
       {ordered.map(g => {
         const c = gc(g.name)
         const isActive = active === g.name
-        const count = (g.equipamentos || []).filter(hasData).length
+        const count = (g.equipamentos || [])
+          .filter(eq => hasData(eq) || hasPatrimonio(eq.code, patrimonioMap))
+          .length
         return (
           <SidebarItem
             key={g.name}
@@ -627,7 +637,7 @@ export default function Equipamentos({ groups, patrimonio = [], goTo, current, t
 
       {/* Corpo */}
       <div style={{ flex: 1, minHeight: 0, display: 'flex', overflow: 'hidden' }}>
-        <Sidebar groups={groups} active={active} onChange={setActive}/>
+        <Sidebar groups={groups} active={active} onChange={setActive} patrimonioMap={patrimonioMap}/>
 
         <div style={{ flex: 1, minHeight: 0, padding: '18px 36px', display: 'flex', flexDirection: 'column' }}>
           <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', overflowX: 'auto' }}>

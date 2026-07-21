@@ -19,8 +19,9 @@ import Previsibilidade2027     from './slides/conteudo/Previsibilidade2027'
 import CapaTimeline  from './slides/capas/CapaTimeline'
 import TimelineObras from './slides/conteudo/TimelineObras'
 import ComparativoMensalObras from './slides/conteudo/ComparativoMensalObras'
+import PrevistoRealizado from './slides/conteudo/PrevistoRealizado'
 
-const TOTAL = 14
+const TOTAL = 15
 
 const variants = {
   enter:  (d) => ({ opacity: 0, x: d > 0 ? 50 : -50 }),
@@ -102,13 +103,14 @@ export default function App() {
           {current === 4  && <AcumuladoAnualHistorico   obras={obras}                           {...nav} />}
           {current === 5  && <CapaPrevisibilidade                                               {...nav} />}
           {current === 6  && <Previsibilidade           obras={obras}                           {...nav} />}
-          {current === 7  && <CapaPrevisibilidade2027                                           {...nav} />}
-          {current === 8  && <Previsibilidade2027       obras={obras}                           {...nav} />}
-          {current === 9  && <CapaTimeline                                                      {...nav} />}
-          {current === 10 && <TimelineObras             obras={obras}                           {...nav} />}
-          {current === 11 && <ComparativoMensalObras             obras={obras}                           {...nav} />}
-          {current === 12 && <CapaEquipamentos                                                  {...nav} />}
-          {current === 13 && <Equipamentos              groups={groups} patrimonio={patrimonio}  {...nav} />}
+          {current === 7 && <PrevistoRealizado obras={obras} {...nav} />}
+          {current === 8  && <CapaPrevisibilidade2027                                           {...nav} />}
+          {current === 9  && <Previsibilidade2027       obras={obras}                           {...nav} />}
+          {current === 10  && <CapaTimeline                                                      {...nav} />}
+          {current === 11 && <TimelineObras             obras={obras}                           {...nav} />}
+          {current === 12 && <ComparativoMensalObras             obras={obras}                           {...nav} />}
+          {current === 13 && <CapaEquipamentos                                                  {...nav} />}
+          {current === 14 && <Equipamentos              groups={groups} patrimonio={patrimonio}  {...nav} />}
         </motion.div>
       </AnimatePresence>
     </div>

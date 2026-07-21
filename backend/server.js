@@ -58,6 +58,25 @@ app.get('/api/patrimonio', async (req, res) => {
   }
 });
 
+// Adicione junto às outras rotas no server.js
+
+let cachePrevistoRealizado = null;
+
+app.get('/api/previsto-realizado', async (req, res) => {
+  try {
+    if (!cachePrevistoRealizado) {
+      console.log('Buscando dados de Previsto/Realizado...');
+      const response = await axios.get(process.env.PREVISTO_REALIZADO_CSV_URL);
+      cachePrevistoRealizado = response.data;
+      console.log('Previsto/Realizado carregado e cacheado.');
+    }
+    res.send(cachePrevistoRealizado);
+  } catch (err) {
+    console.error('Erro ao buscar Previsto/Realizado:', err.message);
+    res.status(500).json({ error: 'Erro ao carregar dados' });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Backend rodando em http://localhost:${PORT}`);
 });

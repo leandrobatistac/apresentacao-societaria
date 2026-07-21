@@ -1,3 +1,4 @@
+
 import NavBar from '../../components/NavBar'
 import { PERIODO } from '../../config/periodo'
 
@@ -28,7 +29,23 @@ export default function CapaGeral({ goTo, current, total }) {
           height: '100%',
           objectFit: 'cover',
           objectPosition: 'center',
-          filter: 'brightness(.82) saturate(.95)',
+          filter: 'brightness(.85) saturate(1)',
+        }}
+      />
+
+      {/* GLOW MODERNO */}
+      <div
+        style={{
+          position: 'absolute',
+          width: 750,
+          height: 750,
+          borderRadius: '50%',
+          background: 'rgba(37,99,235,.18)',
+          filter: 'blur(150px)',
+          top: -250,
+          left: -180,
+          zIndex: 1,
+          pointerEvents: 'none',
         }}
       />
 
@@ -40,13 +57,14 @@ export default function CapaGeral({ goTo, current, total }) {
           background: `
             linear-gradient(
               90deg,
-              rgba(30,58,95,.95) 0%,
-              rgba(30,58,95,.90) 22%,
-              rgba(30,58,95,.72) 42%,
-              rgba(30,58,95,.30) 68%,
-              rgba(30,58,95,.08) 100%
+              rgba(15,23,42,.96) 0%,
+              rgba(15,23,42,.88) 18%,
+              rgba(15,23,42,.58) 40%,
+              rgba(15,23,42,.18) 70%,
+              rgba(15,23,42,.02) 100%
             )
           `,
+          zIndex: 2,
         }}
       />
 
@@ -56,7 +74,8 @@ export default function CapaGeral({ goTo, current, total }) {
           position: 'absolute',
           inset: 0,
           background:
-            'linear-gradient(to bottom, rgba(0,0,0,.12), transparent 25%, transparent 75%, rgba(0,0,0,.25))',
+            'linear-gradient(to bottom, rgba(0,0,0,.08), transparent 25%, transparent 75%, rgba(0,0,0,.25))',
+          zIndex: 3,
         }}
       />
 
@@ -117,7 +136,7 @@ export default function CapaGeral({ goTo, current, total }) {
         {/* CENTRO */}
         <div
           style={{
-            maxWidth: 780,
+            maxWidth: 820,
             marginTop: '-60px',
           }}
         >
@@ -126,12 +145,13 @@ export default function CapaGeral({ goTo, current, total }) {
               display: 'inline-flex',
               alignItems: 'center',
               gap: 10,
-              padding: '8px 16px',
+              padding: '10px 18px',
               borderRadius: 999,
-              background: 'rgba(37,99,235,.12)',
+              background: 'rgba(255,255,255,.06)',
               border: '1px solid rgba(255,255,255,.12)',
-              backdropFilter: 'blur(10px)',
-              marginBottom: 26,
+              backdropFilter: 'blur(20px)',
+              boxShadow: '0 10px 30px rgba(0,0,0,.18)',
+              marginBottom: 28,
             }}
           >
             <div
@@ -160,16 +180,23 @@ export default function CapaGeral({ goTo, current, total }) {
             style={{
               margin: 0,
               color: '#fff',
-              fontWeight: 700,
-              fontSize: 'clamp(42px, 4vw, 68px)',
-              lineHeight: 1.08,
-              letterSpacing: '-0.03em',
-              textShadow: '0 8px 24px rgba(0,0,0,.25)',
+              fontWeight: 800,
+              fontSize: 'clamp(46px, 4.4vw, 72px)',
+              lineHeight: 1.02,
+              letterSpacing: '-0.04em',
+              textShadow: '0 12px 40px rgba(0,0,0,.35)',
             }}
           >
             Resultado de Obras,
             <br />
-            Equipamentos e Financeiro
+            <span
+              style={{
+                color: '#60a5fa',
+              }}
+            >
+              Equipamentos
+            </span>{' '}
+            e Financeiro
           </h1>
         </div>
 
@@ -183,20 +210,34 @@ export default function CapaGeral({ goTo, current, total }) {
         >
           <div
             style={{
-              padding: '22px 28px',
+              position: 'relative',
+              overflow: 'hidden',
+              padding: '22px 28px 22px 34px',
               borderRadius: 18,
-              background: 'rgba(15,23,42,.42)',
-              backdropFilter: 'blur(14px)',
-              border: '1px solid rgba(255,255,255,.08)',
+              background: 'rgba(255,255,255,.05)',
+              backdropFilter: 'blur(20px)',
+              border: '1px solid rgba(255,255,255,.12)',
+              boxShadow: '0 12px 30px rgba(0,0,0,.18)',
             }}
           >
+            <div
+              style={{
+                position: 'absolute',
+                left: 0,
+                top: 0,
+                bottom: 0,
+                width: 4,
+                background: ACCENT,
+              }}
+            />
+
             <div
               style={{
                 fontSize: 10,
                 fontWeight: 600,
                 letterSpacing: '.18em',
                 textTransform: 'uppercase',
-                color: 'rgba(255,255,255,.5)',
+                color: 'rgba(255,255,255,.55)',
                 marginBottom: 6,
               }}
             >
